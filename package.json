@@ -1,0 +1,18 @@
+{
+  "name": "rar-app",
+  "version": "1.0.0",
+  "description": "A fully offline web application for multi-table data input and automatic PowerPoint (.pptx) report generation using a predefined template.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pptxgenjs": "^4.0.1",
+    "sqlite3": "^5.1.7"
+  }
+}

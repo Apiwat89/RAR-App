@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Incumbent Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>จัดการข้อมูล Incumbent</h2>
+        <button class="btn-primary" onclick="openAddModal()">+ เพิ่มใหม่</button>
+    </div>
+
+    <table id="incumbentTable">
+        <thead>
+            <tr>
+                <th>รูป</th>
+                <th>ชื่อ</th>
+                <th>ตำแหน่ง</th>
+                <th>แผนก</th>
+                <th>อายุ</th>
+                <th>จัดการ</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+</div>
+
+<!-- ------------------------------------------------------
+    MODAL FORM
+------------------------------------------------------- -->
+<div id="formModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h3 id="modalTitle">เพิ่มข้อมูล</h3>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="incumbentForm">
+
+            <input type="hidden" id="id">
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+                    <label>รูปภาพ</label>
+                    <input type="file" id="pic" name="pic">
+                </div>
+
+                <div class="form-group">
+                    <label>Emp ID</label>
+                    <input type="text" id="emp_id" name="emp_id">
+                </div>
+
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" name="title">
+                </div>
+
+                <div class="form-group">
+                    <label>Firstname</label>
+                    <input type="text" id="firstname" name="firstname">
+                </div>
+
+                <div class="form-group">
+                    <label>Lastname</label>
+                    <input type="text" id="lastname" name="lastname">
+                </div>
+
+                <div class="form-group">
+                    <label>Current Position</label>
+                    <input type="text" id="current_position" name="current_position">
+                </div>
+
+                <div class="form-group">
+                    <label>Unit</label>
+                    <input type="text" id="unit" name="unit">
+                </div>
+
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="age" name="age">
+                </div>
+
+                <div class="form-group full">
+                    <label>Work Experience</label>
+                    <input type="text" id="work_exp" name="work_exp">
+                </div>
+
+            </div>
+
+            <!-- DEGREE -->
+            <h4 class="section-title">Degrees</h4>
+            <div class="form-grid">
+                <div class="form-group">
+                    <input placeholder="Degree Field 1" id="Degree_field1" name="Degree_field1">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Degree Institution 1" id="Degree_institution1" name="Degree_institution1">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Degree Field 2" id="Degree_field2" name="Degree_field2">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Degree Institution 2" id="Degree_institution2" name="Degree_institution2">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Degree Field 3" id="Degree_field3" name="Degree_field3">
+                </div>
+                <div class="form-group">
+                    <input placeholder="Degree Institution 3" id="Degree_institution3" name="Degree_institution3">
+                </div>
+            </div>
+
+            <h4 class="section-title">Job / Agency / Experience</h4>
+
+            <!-- container สำหรับสร้าง 15 แถว -->
+            <div id="jobsContainer"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                <button type="submit" class="btn-primary">บันทึก</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
