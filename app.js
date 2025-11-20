@@ -23,6 +23,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const incumbentRoute = require("./routes/Incumbent");
 app.use("/incumbent", incumbentRoute);
 
+const Report_Incumbent = require("./routes/Report_Incumbent");
+app.use("/report-incumbent", Report_Incumbent);
+
 // run server
 const PORT = 3000;
 app.listen(PORT, () => console.log("Server running on port http://localhost:3000"));

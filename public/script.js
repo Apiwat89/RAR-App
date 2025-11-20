@@ -37,6 +37,11 @@ function openAddModal() {
     document.getElementById("modalTitle").innerText = "เพิ่มข้อมูล";
     document.getElementById("incumbentForm").reset();
     document.getElementById("id").value = "";
+
+    jobsContainer.innerHTML = "";
+    jobIndex = 1;
+    addJobRow();
+
     document.getElementById("formModal").style.display = "block";
 }
 
@@ -46,19 +51,28 @@ function closeModal() {
 
 
 /* -----------------------------
-    LOAD JOB ROWS (1–15)
+    JOB ROW SYSTEM
 ----------------------------- */
-const jobContainer = document.getElementById("jobsContainer");
-let jobFields = "";
+const jobsContainer = document.getElementById("jobsContainer");
+const addBtn = document.getElementById("addJobRowBtn");
+let jobIndex = 1;
 
-for (let i = 1; i <= 15; i++) {
-    jobFields += `
-        <div class="form-group"><input placeholder="Job ${i}" id="job${i}" name="job${i}"></div>
-        <div class="form-group"><input placeholder="Agency ${i}" id="Agency${i}" name="Agency${i}"></div>
-        <div class="form-group"><input placeholder="Job Exp ${i}" id="job_exp${i}" name="job_exp${i}"></div>
+function addJobRow(job = "", agency = "", exp = "") {
+    const div = document.createElement("div");
+    div.classList.add("job-row");
+
+    div.innerHTML = `
+        <input placeholder="ตำแหน่ง" name="job${jobIndex}" value="${job}">
+        <input placeholder="หน่วยงาน" name="Agency${jobIndex}" value="${agency}">
+        <input placeholder="อายุงาน" name="job_exp${jobIndex}" value="${exp}">
+        <button type="button" class="remove-job" onclick="this.parentElement.remove()">ลบแถวนี้</button>
     `;
+
+    jobsContainer.appendChild(div);
+    jobIndex++;
 }
-jobContainer.innerHTML = jobFields;
+
+addBtn.addEventListener("click", () => addJobRow());
 
 
 /* -----------------------------
@@ -67,22 +81,32 @@ jobContainer.innerHTML = jobFields;
 document.getElementById("incumbentForm").onsubmit = async (e) => {
     e.preventDefault();
 
-    const id = document.getElementById("id").value;
-    const method = id ? "PUT" : "POST";
-    const url = id ? `${API}/update/${id}` : `${API}/add`;
+    try {
+        reindexJobRows();
 
-    const formData = new FormData(e.target);
+        const id = document.getElementById("id").value;
+        const method = id ? "PUT" : "POST";
+        const url = id ? `${API}/update/${id}` : `${API}/add`;
 
-    const res = await fetch(url, {
-        method,
-        body: formData,
-    });
+        const formData = new FormData(e.target);
 
-    if (res.ok) {
+        const res = await fetch(url, { method, body: formData });
+
+        if (!res.ok) {
+            console.error("SERVER ERROR:", await res.text());
+            alert("บันทึกไม่สำเร็จ (ดู console)");
+            return;
+        }
+
         closeModal();
         loadData();
+
+    } catch (err) {
+        console.error("SUBMIT ERROR:", err);
+        alert("เกิดข้อผิดพลาด (ดู console)");
     }
 };
+
 
 
 /* -----------------------------
@@ -92,8 +116,7 @@ async function editItem(id) {
     const res = await fetch(API + "/list");
     const rows = await res.json();
 
-    id = Number(id); // แก้บั๊กสำคัญ!
-
+    id = Number(id);
     const item = rows.find(x => Number(x.id) === id);
 
     openAddModal();
@@ -103,15 +126,45 @@ async function editItem(id) {
     // เติมข้อมูลลง input
     Object.keys(item).forEach(key => {
         const el = document.getElementById(key);
-        if (!el) return;
-
-        // รูปไม่ใส่ลง input file
-        if (key === "pic") return;
-
+        if (!el || key === "pic") return;
         el.value = item[key] ?? "";
     });
+
+    jobsContainer.innerHTML = "";
+    jobIndex = 1;
+
+    let added = false;
+
+    for (let i = 1; i <= 15; i++) {
+        const job = item[`job${i}`];
+        const agency = item[`Agency${i}`];
+        const exp = item[`job_exp${i}`];
+
+        if (job || agency || exp) {
+            addJobRow(job ?? "", agency ?? "", exp ?? "");
+            added = true;
+        }
+    }
+
+    if (!added) addJobRow();
 }
 
+function reindexJobRows() {
+    const rows = document.querySelectorAll("#jobsContainer .job-row");
+
+    let index = 1;
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll("input");
+
+        inputs[0].name = `job${index}`;
+        inputs[1].name = `Agency${index}`;
+        inputs[2].name = `job_exp${index}`;
+
+        index++;
+    });
+
+    jobIndex = index; // อัปเดตตัวนับ
+}
 
 /* -----------------------------
     DELETE
@@ -121,4 +174,27 @@ async function deleteItem(id) {
 
     await fetch(API + "/delete/" + id, { method: "DELETE" });
     loadData();
+}
+
+
+/* -----------------------------
+    PPTX
+----------------------------- */
+async function downloadPPTX() {
+    const res = await fetch("/Report-incumbent/pptx");
+
+    if (!res.ok) {
+        alert("โหลดไฟล์ไม่สำเร็จ");
+        return;
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Incumbent_Report.pptx";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
 }

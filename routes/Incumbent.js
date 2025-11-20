@@ -65,15 +65,40 @@ router.post("/add", upload.single("pic"), (req, res) => {
     const db = req.app.locals.db;
 
     const body = req.body;
-    const picPath = req.file ? req.file.filename : null;
+    const picPath = req.file ? req.file.filename : "";
 
-    const data = { ...body, pic: picPath };
+    // รายการฟิลด์ใน DB ตามลำดับจริง
+    const fields = [
+        "pic",
+        "emp_id",
+        "title",
+        "firstname",
+        "lastname",
+        "current_position",
+        "unit",
+        "age",
+        "work_exp",
 
-    const fields = Object.keys(data).join(",");
-    const placeholders = Object.keys(data).map(() => "?").join(",");
-    const values = Object.values(data);
+        "Degree_field1", "Degree_institution1",
+        "Degree_field2", "Degree_institution2",
+        "Degree_field3", "Degree_institution3",
+    ];
 
-    const sql = `INSERT INTO incumbent (${fields}) VALUES (${placeholders})`;
+    // job1-15, agency1-15, job_exp1-15
+    for (let i = 1; i <= 15; i++) {
+        fields.push(`job${i}`);
+        fields.push(`Agency${i}`);
+        fields.push(`job_exp${i}`);
+    }
+
+    // -------- สร้าง values ให้ครบ -------
+    const values = fields.map(f => {
+        if (f === "pic") return picPath;       // ถ้ามีรูป → filename
+        return body[f] || "";                  // ไม่มีค่าส่งมา → ใส่ ""
+    });
+
+    const placeholders = fields.map(() => "?").join(",");
+    const sql = `INSERT INTO incumbent (${fields.join(",")}) VALUES (${placeholders})`;
 
     db.run(sql, values, function (err) {
         if (err) return res.status(500).json({ error: err.message });
@@ -116,6 +141,24 @@ router.put("/update/:id", upload.single("pic"), (req, res) => {
 
     if (picPath) body.pic = picPath;
 
+    // -----------------------------------------------
+    // สร้างลิสต์ field ทั้งหมดที่ต้องล้างก่อน
+    // -----------------------------------------------
+    const jobFields = [];
+    for (let i = 1; i <= 15; i++) {
+        jobFields.push(`job${i}`);
+        jobFields.push(`Agency${i}`);
+        jobFields.push(`job_exp${i}`);
+    }
+
+    // ใส่ค่า "" ให้ field ที่หน้าเว็บไม่ส่งมา
+    jobFields.forEach(f => {
+        if (!(f in body)) body[f] = "";
+    });
+
+    // -----------------------------------------------
+    // สร้าง SQL
+    // -----------------------------------------------
     const updates = Object.keys(body).map(k => `${k}=?`).join(",");
     const values = [...Object.values(body), id];
 
