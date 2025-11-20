@@ -18,15 +18,16 @@ router.get("/pptx", (req, res) => {
                SECTION HEADER (TITLE)
             --------------------------- */
             slide.addShape(pptx.ShapeType.rect, {
-                x: 0.2, y: 0.2, w: 12, h: 0.8,
+                x: 1.4, y: 0.85, w: 8.1, h: 0.3,
                 fill: { color: "00B050" }
             });
 
-            slide.addText(`ถอดรหัสเส้นทางอาชีพของคุณ ชื่อ ${person.firstname} ${person.lastname}`, {
-                x: 0.3, y: 0.25,
-                fontSize: 24,
+            slide.addText(`ถอดรหัสเส้นทางอาชีพของคุณ ${person.firstname} ${person.lastname}`, {
+                x: 0.4, y: 0.42,
+                fontSize: 32,
+                fontFace: "FreesiaUPC",
                 bold: true,
-                color: "FFFFFF"
+                color: "00B050"
             });
 
             /* --------------------------
@@ -35,19 +36,24 @@ router.get("/pptx", (req, res) => {
             if (person.pic) {
                 slide.addImage({
                     path: path.join(__dirname, "..", "uploads", person.pic),
-                    x: 0.3, y: 1.3, w: 2.2, h: 2.2
+                    x: 0.3, y: 0.85, w: 1, h: 1.3
                 });
             }
 
-            slide.addText("BU Head\nPicture", {
-                x: 0.35, y: 1.3,
-                w: 2.2, h: 2.2,
-                fontSize: 16,
-                bold: true,
-                color: "666666",
-                align: "center",
-                valign: "middle"
+            slide.addImage({
+                path: path.join(__dirname, "..", "uploads", "Picture1.png"),
+                x: 9.25, y: 0.18, w: 0.5, h: 0.5
             });
+
+            // slide.addText("BU Head\nPicture", {
+            //     x: 0.35, y: 1.3,
+            //     w: 2.2, h: 2.2,
+            //     fontSize: 16,
+            //     bold: true,
+            //     color: "666666",
+            //     align: "center",
+            //     valign: "middle"
+            // });
 
             /* --------------------------
                MAIN TABLE SECTION
