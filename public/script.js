@@ -58,6 +58,13 @@ const addBtn = document.getElementById("addJobRowBtn");
 let jobIndex = 1;
 
 function addJobRow(job = "", agency = "", exp = "") {
+    const rows = document.querySelectorAll("#jobsContainer .job-row");
+
+    // ถ้ามีครบ 15 งานแล้ว → ลบแถวแรก
+    if (rows.length >= 15) {
+        rows[0].remove(); 
+    }
+
     const div = document.createElement("div");
     div.classList.add("job-row");
 
@@ -133,7 +140,8 @@ async function editItem(id) {
     jobsContainer.innerHTML = "";
     jobIndex = 1;
 
-    let added = false;
+    // เก็บงานอย่างมากที่สุด = 15 รายการสุดท้าย
+    let jobList = [];
 
     for (let i = 1; i <= 15; i++) {
         const job = item[`job${i}`];
@@ -141,12 +149,15 @@ async function editItem(id) {
         const exp = item[`job_exp${i}`];
 
         if (job || agency || exp) {
-            addJobRow(job ?? "", agency ?? "", exp ?? "");
-            added = true;
+            jobList.push({ job, agency, exp });
         }
     }
 
-    if (!added) addJobRow();
+    // ถ้าเกิน 15 → เก็บท้ายสุด 15 รายการ
+    jobList = jobList.slice(-15);
+
+    // วาดเฉพาะงานที่เหลือหลังตัดแล้ว
+    jobList.forEach(j => addJobRow(j.job, j.agency, j.exp));
 }
 
 function reindexJobRows() {
@@ -163,8 +174,9 @@ function reindexJobRows() {
         index++;
     });
 
-    jobIndex = index; // อัปเดตตัวนับ
+    jobIndex = index;
 }
+
 
 /* -----------------------------
     DELETE

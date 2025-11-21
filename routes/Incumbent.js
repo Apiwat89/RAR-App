@@ -141,9 +141,18 @@ router.put("/update/:id", upload.single("pic"), (req, res) => {
 
     if (picPath) body.pic = picPath;
 
-    // -----------------------------------------------
-    // สร้างลิสต์ field ทั้งหมดที่ต้องล้างก่อน
-    // -----------------------------------------------
+    // ------------ RESET DEGREE ------------ //
+    const degreeFields = [
+        "Degree_field1", "Degree_institution1",
+        "Degree_field2", "Degree_institution2",
+        "Degree_field3", "Degree_institution3"
+    ];
+
+    degreeFields.forEach(f => {
+        if (!(f in body)) body[f] = "";
+    });
+
+    // ------------ RESET JOBS ------------ //
     const jobFields = [];
     for (let i = 1; i <= 15; i++) {
         jobFields.push(`job${i}`);
@@ -151,7 +160,6 @@ router.put("/update/:id", upload.single("pic"), (req, res) => {
         jobFields.push(`job_exp${i}`);
     }
 
-    // ใส่ค่า "" ให้ field ที่หน้าเว็บไม่ส่งมา
     jobFields.forEach(f => {
         if (!(f in body)) body[f] = "";
     });
