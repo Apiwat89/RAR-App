@@ -88,6 +88,20 @@ button {
     background: #0f62b5;
 }
 
+.btn-success {
+    background: #aad219;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.btn-success:hover {
+    background: #86a710;
+}
+
 .btn-secondary {
     background: #6c757d;
     color: white;
@@ -182,6 +196,16 @@ select {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 16px;
+}
+
+.grid-2 input {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid #cfcfcf;
+    outline: none;
+    transition: 0.15s;
+    font-size: 15px;
 }
 
 .section-title {

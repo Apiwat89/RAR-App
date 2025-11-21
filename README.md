@@ -14,3 +14,6 @@ A fully offline web application for multi-table data input and automatic PowerPo
 
 📄 License
 Internal use only.
+
+terminal = npm run build 
+rar-app.exe

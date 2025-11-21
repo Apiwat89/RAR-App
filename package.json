@@ -4,7 +4,8 @@
   "description": "A fully offline web application for multi-table data input and automatic PowerPoint (.pptx) report generation using a predefined template.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg . --targets node18-win-x64 --output rar-app.exe"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +25,18 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
+  },
+  "bin": "app.js",
+  "pkg": {
+    "scripts": [
+      "routes/Incumbent.js",
+      "routes/Report_Incumbent.js"
+    ],
+    "assets": [
+      "public/**/*",
+      "routes/**/*",
+      "uploads/**/*",
+      "data/**/*"
+    ]
   }
 }
