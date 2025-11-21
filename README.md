@@ -15,5 +15,10 @@ A fully offline web application for multi-table data input and automatic PowerPo
 📄 License
 Internal use only.
 
-terminal = npm run build 
-rar-app.exe
+
+D:\Portable\node\node.exe -v
+D:\Portable\node\npm -v
+set PATH=D:\Portable\node;%PATH%
+npm install
+node app.js [or] npx.cmd nodemon app.js
+npm run build 
