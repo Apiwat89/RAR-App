@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const sharp = require("sharp");
+const fs = require("fs");
 
 /* -------------------------------------------------------
    MULTER (Upload)
@@ -12,10 +14,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-
-
 /* -------------------------------------------------------
-   CREATE TABLE (better-sqlite3 ไม่มี callback)
+   CREATE TABLE
 ------------------------------------------------------- */
 router.use((req, res, next) => {
     const db = req.app.locals.db;
@@ -53,19 +53,40 @@ router.use((req, res, next) => {
             job_exp11 TEXT, job_exp12 TEXT, job_exp13 TEXT, job_exp14 TEXT, job_exp15 TEXT
         )
     `;
-
     db.prepare(createSQL).run();
     next();
 });
 
+/* -------------------------------------------------------
+   FUNCTION: Compress Image
+------------------------------------------------------- */
+async function compressImage(filePath) {
+    try {
+        await sharp(filePath)
+            .resize({ width: 600 })          // ลดความกว้าง
+            .jpeg({ quality: 50 })           // คุณภาพ 70%
+            .toFile(filePath + "_tmp");      // ไฟล์ชั่วคราว
+
+        fs.renameSync(filePath + "_tmp", filePath); // เขียนทับของเดิม
+    } catch (err) {
+        console.error("Sharp compress error:", err);
+    }
+}
 
 /* -------------------------------------------------------
    INSERT
 ------------------------------------------------------- */
-router.post("/add", upload.single("pic"), (req, res) => {
+router.post("/add", upload.single("pic"), async (req, res) => {
     const db = req.app.locals.db;
     const body = req.body;
-    const picPath = req.file ? req.file.filename : "";
+
+    let picFilename = "";
+
+    if (req.file) {
+        const filePath = req.file.path;
+        await compressImage(filePath);
+        picFilename = req.file.filename;
+    }
 
     const fields = [
         "pic", "emp_id", "title", "firstname", "lastname",
@@ -81,10 +102,9 @@ router.post("/add", upload.single("pic"), (req, res) => {
         fields.push(`job_exp${i}`);
     }
 
-    const values = fields.map(f => f === "pic" ? picPath : body[f] || "");
-    const placeholders = fields.map(() => "?").join(",");
+    const sql = `INSERT INTO incumbent (${fields.join(",")}) VALUES (${fields.map(() => "?").join(",")})`;
 
-    const sql = `INSERT INTO incumbent (${fields.join(",")}) VALUES (${placeholders})`;
+    const values = fields.map(f => f === "pic" ? picFilename : body[f] || "");
 
     const stmt = db.prepare(sql);
     const result = stmt.run(values);
@@ -92,13 +112,11 @@ router.post("/add", upload.single("pic"), (req, res) => {
     res.json({ message: "Insert OK", id: result.lastInsertRowid });
 });
 
-
 /* -------------------------------------------------------
    LIST
 ------------------------------------------------------- */
 router.get("/list", (req, res) => {
     const db = req.app.locals.db;
-
     const rows = db.prepare(`SELECT * FROM incumbent ORDER BY id DESC`).all();
 
     const host = req.protocol + "://" + req.get("host") + "/uploads/";
@@ -111,23 +129,25 @@ router.get("/list", (req, res) => {
     res.json(result);
 });
 
-
 /* -------------------------------------------------------
    UPDATE
 ------------------------------------------------------- */
-router.put("/update/:id", upload.single("pic"), (req, res) => {
+router.put("/update/:id", upload.single("pic"), async (req, res) => {
     const db = req.app.locals.db;
     const id = req.params.id;
     const body = req.body;
 
-    if (req.file) body.pic = req.file.filename;
+    if (req.file) {
+        const filePath = req.file.path;
+        await compressImage(filePath);
+        body.pic = req.file.filename;
+    }
 
     const degreeFields = [
         "Degree_field1", "Degree_institution1",
         "Degree_field2", "Degree_institution2",
         "Degree_field3", "Degree_institution3"
     ];
-
     degreeFields.forEach(f => { if (!(f in body)) body[f] = ""; });
 
     for (let i = 1; i <= 15; i++) {
@@ -146,7 +166,6 @@ router.put("/update/:id", upload.single("pic"), (req, res) => {
     res.json({ message: "Update OK", updated: result.changes });
 });
 
-
 /* -------------------------------------------------------
    DELETE
 ------------------------------------------------------- */
@@ -158,6 +177,5 @@ router.delete("/delete/:id", (req, res) => {
 
     res.json({ message: "Delete OK", deleted: result.changes });
 });
-
 
 module.exports = router;

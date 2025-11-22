@@ -1,59 +1,40 @@
 const express = require("express");
 const path = require("path");
-const Database = require("better-sqlite3");   // ← ใช้ better-sqlite3
+const Database = require("better-sqlite3");
 const app = express();
 
-/* -----------------------------
-   BASE DIRECTORY (Portable)
------------------------------ */
-const baseDir = process.cwd();  // ที่อยู่โฟลเดอร์ .exe ตอนรันจริง
+/* BASE DIR (โฟลเดอร์ที่ user เปิด run.cmd) */
+const baseDir = __dirname;
 
 const dataDir = path.join(baseDir, "data");
 const uploadDir = path.join(baseDir, "uploads");
 const publicDir = path.join(baseDir, "public");
-
 const dbPath = path.join(dataDir, "database.sqlite");
 
-
-/* -----------------------------
-   DATABASE (better-sqlite3)
------------------------------ */
+/* DB */
 let db;
 try {
-    db = new Database(dbPath, { verbose: console.log });
-    console.log("SQLite connected:", dbPath);
+    db = new Database(dbPath);
+    console.log("DB loaded:", dbPath);
 } catch (err) {
-    console.error("DB Error:", err);
+    console.error("DB Error", err);
 }
 
 app.locals.db = db;
 
-
-/* -----------------------------
-   BODY PARSER
------------------------------ */
+/* Middleware */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-/* -----------------------------
-   STATIC FILES
------------------------------ */
+/* Static */
 app.use(express.static(publicDir));
 app.use("/uploads", express.static(uploadDir));
 
-
-/* -----------------------------
-   ROUTES
------------------------------ */
+/* Routes */
 app.use("/incumbent", require("./routes/Incumbent"));
 app.use("/report-incumbent", require("./routes/Report_Incumbent"));
 
-
-/* -----------------------------
-   START SERVER
------------------------------ */
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log("Server running at http://localhost:" + PORT);
+/* Start */
+app.listen(3000, () => {
+    console.log("Local server: http://localhost:3000");
 });

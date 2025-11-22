@@ -21,23 +21,12 @@
     "multer": "^2.0.2",
     "officegen": "^0.6.5",
     "pizzip": "^3.2.0",
+    "pkg": "^5.8.1",
     "pptxgenjs": "^4.0.1",
-    "pptxtemplater": "^1.0.5"
+    "pptxtemplater": "^1.0.5",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
-  },
-  "bin": "app.js",
-  "pkg": {
-    "scripts": [
-      "routes/Incumbent.js",
-      "routes/Report_Incumbent.js"
-    ],
-    "assets": [
-      "public/**/*",
-      "routes/**/*",
-      "uploads/**/*",
-      "data/**/*"
-    ]
   }
 }

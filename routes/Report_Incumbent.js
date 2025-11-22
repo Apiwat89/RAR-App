@@ -7,8 +7,8 @@ router.get("/pptx", async (req, res) => {
 
     const db = req.app.locals.db;
 
-    // ⛔ เดิมใช้ db.all(callback) → ใช้ไม่ได้กับ better-sqlite3
-    // ✅ ใหม่: ดึงทั้งหมดแบบ synchronous
+    // เดิมใช้ db.all(callback) → ใช้ไม่ได้กับ better-sqlite3
+    // ใหม่: ดึงทั้งหมดแบบ synchronous
     const rows = db.prepare("SELECT * FROM incumbent").all();
 
     let pptx = new PptxGenJS();
