@@ -30,8 +30,9 @@ router.use((req, res, next) => {
             lastname TEXT,
             current_position TEXT,
             unit TEXT,
-            age TEXT,
-            work_exp TEXT,
+
+            birthday TEXT,
+            work_start TEXT,
 
             Degree_field1 TEXT,
             Degree_institution1 TEXT,
@@ -43,16 +44,19 @@ router.use((req, res, next) => {
             job1 TEXT, job2 TEXT, job3 TEXT, job4 TEXT, job5 TEXT,
             job6 TEXT, job7 TEXT, job8 TEXT, job9 TEXT, job10 TEXT,
             job11 TEXT, job12 TEXT, job13 TEXT, job14 TEXT, job15 TEXT,
+            job16 TEXT, job17 TEXT, job18 TEXT, job19 TEXT, job20 TEXT,
 
             Agency1 TEXT, Agency2 TEXT, Agency3 TEXT, Agency4 TEXT, Agency5 TEXT,
             Agency6 TEXT, Agency7 TEXT, Agency8 TEXT, Agency9 TEXT, Agency10 TEXT,
             Agency11 TEXT, Agency12 TEXT, Agency13 TEXT, Agency14 TEXT, Agency15 TEXT,
+            Agency16 TEXT, Agency17 TEXT, Agency18 TEXT, Agency19 TEXT, Agency20 TEXT,
 
             job_exp1 TEXT, job_exp2 TEXT, job_exp3 TEXT, job_exp4 TEXT, job_exp5 TEXT,
             job_exp6 TEXT, job_exp7 TEXT, job_exp8 TEXT, job_exp9 TEXT, job_exp10 TEXT,
-            job_exp11 TEXT, job_exp12 TEXT, job_exp13 TEXT, job_exp14 TEXT, job_exp15 TEXT
+            job_exp11 TEXT, job_exp12 TEXT, job_exp13 TEXT, job_exp14 TEXT, job_exp15 TEXT,
+            job_exp16 TEXT, job_exp17 TEXT, job_exp18 TEXT, job_exp19 TEXT, job_exp20 TEXT
         )
-    `;
+        `;
     db.prepare(createSQL).run();
     next();
 });
@@ -90,13 +94,14 @@ router.post("/add", upload.single("pic"), async (req, res) => {
 
     const fields = [
         "pic", "emp_id", "title", "firstname", "lastname",
-        "current_position", "unit", "age", "work_exp",
+        "current_position", "unit",
+        "birthday", "work_start",
         "Degree_field1", "Degree_institution1",
         "Degree_field2", "Degree_institution2",
         "Degree_field3", "Degree_institution3"
     ];
 
-    for (let i = 1; i <= 15; i++) {
+    for (let i = 1; i <= 20; i++) {
         fields.push(`job${i}`);
         fields.push(`Agency${i}`);
         fields.push(`job_exp${i}`);
@@ -150,7 +155,7 @@ router.put("/update/:id", upload.single("pic"), async (req, res) => {
     ];
     degreeFields.forEach(f => { if (!(f in body)) body[f] = ""; });
 
-    for (let i = 1; i <= 15; i++) {
+    for (let i = 1; i <= 20; i++) {
         ["job", "Agency", "job_exp"].forEach(p => {
             const f = `${p}${i}`;
             if (!(f in body)) body[f] = "";

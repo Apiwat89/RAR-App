@@ -99,13 +99,13 @@
 
             <div class="grid-2">
                 <div>
-                    <label>อายุ <label style="color: red;">*</label></label>
-                    <input type="text" name="age" id="age" required>
+                    <label>วันเกิด <label style="color: red;">*</label></label>
+                    <input type="text" name="birthday" id="birthday" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
                 </div>
 
                 <div>
-                    <label>อายุงาน <label style="color: red;">*</label></label>
-                    <input type="text" name="work_exp" id="work_exp" required>
+                    <label>วันที่เริ่มงาน <label style="color: red;">*</label></label>
+                    <input type="text" name="work_start" id="work_start" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
                 </div>
             </div>
 
@@ -130,8 +130,11 @@
             <!-- ============================
                 JOB / AGENCY / EXP Section
             ============================= -->
-            <h3 class="section-title">ตำแหน่ง / หน่วยงาน / อายุงานในตำแหน่ง</h3>
-
+            <h3 class="section-title">ตำแหน่ง / หน่วยงาน / อายุงานในตำแหน่ง
+                <span class="count" id="jobCount" style="color:#d9534f; font-weight:bold; margin-left:50px;">
+                    (0/20 ตำแหน่ง)
+                </span>
+            </h3>
             <div id="jobsContainer"></div>
 
             <button type="button" id="addJobRowBtn" class="btn-primary small">
@@ -143,7 +146,7 @@
 
             <div class="form-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
-                <button type="submit" class="btn-primary">บันทึก</button>
+                <button type="submit" id="submit" class="btn-primary">บันทึก</button>
             </div>
 
         </form>

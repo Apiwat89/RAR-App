@@ -253,6 +253,16 @@ select {
     color: white;
 }
 
+.input-error {
+    border: 1px solid red !important;
+}
+
+.error-text {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
 /* ------------------------------------------------------
    FOOTER
 ------------------------------------------------------ */
@@ -267,3 +277,4 @@ input, select, textarea {
     width: 100%;
     box-sizing: border-box;
 }
+

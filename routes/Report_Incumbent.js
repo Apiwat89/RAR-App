@@ -3,6 +3,35 @@ const router = express.Router();
 const PptxGenJS = require("pptxgenjs");
 const path = require("path");
 
+function parseThaiDate(dateStr) {
+    if (!dateStr) return null;
+    let [d, m, y] = dateStr.split("/").map(Number);
+    if (!d || !m || !y) return null;
+    if (y > 2400) y -= 543;  // พ.ศ. → ค.ศ.
+    return new Date(y, m - 1, d);
+}
+
+function calcAge(dateStr) {
+    const date = parseThaiDate(dateStr);
+    if (!date) return "-";
+
+    const now = new Date();
+    let years = now.getFullYear() - date.getFullYear();
+    let months = now.getMonth() - date.getMonth();
+
+    if (months < 0) { years--; months += 12; }
+    if (years < 0) return "-";
+
+    return `${years} ปี ${months} เดือน`;
+}
+
+function convertYM(ymStr) {
+    if (!ymStr) return "-";
+    let [y, m] = ymStr.split("/").map(Number);
+    if (isNaN(y) || isNaN(m)) return "-";
+    return `${y} ปี ${m} เดือน`;
+}
+
 router.get("/pptx", async (req, res) => {
 
     const db = req.app.locals.db;
@@ -63,13 +92,13 @@ router.get("/pptx", async (req, res) => {
         let eduRows = [];
 
         if (person.Degree_field1 || person.Degree_institution1)
-            eduRows.push(`ปริญญาตรี    สาขา ${person.Degree_field1 || "-"}   สถาบัน ${person.Degree_institution1 || "-"}`);
+            eduRows.push(`ปริญญาตรี    สาขา ${person.Degree_field1 || "-"}   ${person.Degree_institution1 || "-"}`);
 
         if (person.Degree_field2 || person.Degree_institution2)
-            eduRows.push(`ปริญญาโท    สาขา ${person.Degree_field2 || "-"}   สถาบัน ${person.Degree_institution2 || "-"}`);
+            eduRows.push(`ปริญญาโท    สาขา ${person.Degree_field2 || "-"}   ${person.Degree_institution2 || "-"}`);
 
         if (person.Degree_field3 || person.Degree_institution3)
-            eduRows.push(`ปริญญาเอก   สาขา ${person.Degree_field3 || "-"}   สถาบัน ${person.Degree_institution3 || "-"}`);
+            eduRows.push(`ปริญญาเอก   สาขา ${person.Degree_field3 || "-"}   ${person.Degree_institution3 || "-"}`);
 
         if (eduRows.length === 0) eduRows.push("-");
 
@@ -87,9 +116,9 @@ router.get("/pptx", async (req, res) => {
             ],
             [
                 { text: "อายุตัว", options: { bold: true } },
-                person.age || "-",
+                calcAge(person.birthday) || "-",
                 { text: "อายุงาน", options: { bold: true } },
-                person.work_exp || "-"
+                calcAge(person.work_start) || "-"
             ]
         ];
 
@@ -125,20 +154,24 @@ router.get("/pptx", async (req, res) => {
         /* -------------------------------------------------------
            JOB BLOCKS + SNAKE ARROWS
         ------------------------------------------------------- */
-        let jobs = [];
-        for (let i = 1; i <= 15; i++) {
+        let allJobs = [];
+        for (let i = 1; i <= 20; i++) {
             const job = person[`job${i}`];
             const ag = person[`Agency${i}`];
             const exp = person[`job_exp${i}`];
 
-            if (job || ag || exp) jobs.push({ job, agency: ag, exp });
+            if (job || ag || exp)
+                allJobs.push({ job, agency: ag, exp });
         }
 
-        const cols = 5;
-        const startX = 0.15;
+        // เลือกเฉพาะ 12 อันท้ายสุด (ล่าสุด)
+        let jobs = allJobs.slice(-12);
+
+        const cols = 4;
+        const startX = 0.20;
         const startY = 2.7;
-        const boxW = 1.85;
-        const boxH = 0.6;
+        const boxW = 2.3;
+        const boxH = 0.8;
         const gapX = 0.1;
         const gapY = 0.2;
 
@@ -177,14 +210,14 @@ router.get("/pptx", async (req, res) => {
                 { text: jobs[i].agency || "-" },
                 { text: "\n" },
                 { text: "อายุงานรวมในตำแหน่ง: ", options: { bold: true } },
-                { text: jobs[i].exp || "-" }
+                { text: convertYM(jobs[i].exp) || "-" }
             ], {
                 x: x + 0.01,
                 y: y + 0.03,
                 w: boxW - 0.03,
                 h: boxH - 0.05,
                 fontFace: "FreesiaUPC",
-                fontSize: 9.5
+                fontSize: 10.5
             });
 
             if (next) {
