@@ -201,6 +201,30 @@ function reindexJobRows() {
 /* =============================
     DELETE
 ============================= */
+/* =============================
+    DELETE ITEM (SERVER)
+============================= */
+async function deleteItem(id) {
+    if (!confirm("ยืนยันลบรายการนี้?")) return;
+
+    try {
+        const res = await fetch(`${API}/delete/${id}`, {
+            method: "DELETE"
+        });
+
+        if (!res.ok) {
+            alert("ลบรายการไม่สำเร็จ");
+            console.error(await res.text());
+            return;
+        }
+
+        loadData(); // refresh table
+    } catch (err) {
+        console.error("DELETE ERROR:", err);
+        alert("เกิดข้อผิดพลาด ไม่สามารถลบได้");
+    }
+}
+
 function deleteRow(btn) {
     const row = btn.closest(".job-row");
     row.remove();

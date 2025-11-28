@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Successor Form</title>
+  <link rel="stylesheet" href="successor.css">
+</head>
+<body>
+
+    <a href="index.html" class="btn-back">← กลับหน้าเมนู</a>
+
+
+  <div class="container">
+
+    <div class="header">
+        <h2>จัดการข้อมูล Successor</h2>
+        <div class="box1">
+            <button class="btn-primary" onclick="openAddModal()">+ เพิ่มใหม่</button>
+            <button class="btn-success" onclick="downloadPPTX()">⬇ โหลดรายงาน PPTX</button>
+        </div>
+    </div>
+
+    <table id="successorTable">
+        <thead>
+            <tr>
+                <th>รูป</th>
+                <th>ชื่อ</th>
+                <th>ตำแหน่งเป้าหมาย</th>
+                <th>ลำดับ</th>
+                <th>อายุ</th>
+                <th>จัดการ</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+</div>
+
+<!-- POPUP MODAL -->
+<div id="formModal" class="modal" style="display:none;">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="modalTitle">เพิ่มข้อมูล</h2>
+            <span class="close" onclick="closeModal()">×</span>
+        </div>
+
+        <form id="successorForm" enctype="multipart/form-data">
+
+        <!-- รูปภาพ -->
+        <div class="form-section">
+            <label>รูปภาพ </label>
+            <input type="file" name="pic" id="pic" >
+        </div>
+
+        <!-- ข้อมูลส่วนตัว -->
+        <h3 class="section-title">ข้อมูลพนักงาน</h3>
+
+        <div class="grid-2">
+            <div>
+                <label>ID <label style="color: red;">*</label></label>
+                <input type="text" name="emp_id" id="emp_id" required>
+            </div>
+
+            <div>
+                <label>คำนำหน้า <label style="color: red;">*</label></label>
+                <select id="title" name="title" required>
+                    <option value="" disabled selected>กรุณาเลือก</option>
+                    <option value="นาย">นาย</option>
+                    <option value="นาง">นาง</option>
+                    <option value="นางสาว">นางสาว</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <label>ชื่อ <label style="color: red;">*</label></label>
+                <input type="text" name="firstname" id="firstname" required>
+            </div>
+
+            <div>
+                <label>นามสกุล <label style="color: red;">*</label></label>
+                <input type="text" name="lastname" id="lastname" required>
+            </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+              <label>วันเกิด <label style="color: red;">*</label></label>
+              <input type="text" name="birthday" id="birthday" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
+          </div>
+
+          <div>
+              <label>วันที่เริ่มงาน <label style="color: red;">*</label></label>
+              <input type="text" name="work_start" id="work_start" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
+          </div>
+      </div>
+
+      <h3 class="section-title">สืบทอดตำแหน่ง</h3>
+        <div class="grid-2">
+            <div>
+                <label>ตำแหน่งเป้าหมาย</label>
+                <input type="text" name="target_position" id="target_position">
+            </div>
+
+            <div>
+                <label>ลำดับ</label>
+                <input type="text" name="index_no" id="index_no">
+            </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+              <label>G+</label>
+              <input type="text" name="g_plus" id="g_plus">
+          </div>
+
+          <div>
+              <label>OPQ</label>
+              <input type="text" name="opq" id="opq">
+          </div>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <label>ผลการปฏิบัติงานปี 66</label>
+                <input type="text" name="annual_performance66" id="annual_performance66">
+            </div>
+            <div>
+                <label>ผลการปฏิบัติงานปี 67</label>
+                <input type="text" name="annual_performance67" id="annual_performance67">
+            </div>
+        </div>
+
+        <!-- Degree -->
+        <h3 class="section-title">ปริญญา</h3>
+
+        <div class="grid-2">
+            <input id="degree_field1" name="degree_field1" placeholder="ปริญญาตรี (สาขา)">
+            <input id="degree_institution1" name="degree_institution1" placeholder="ปริญญาตรี (สถาบัน)">
+        </div>
+
+        <div class="grid-2">
+            <input id="degree_field2" name="degree_field2" placeholder="ปริญญาโท (สาขา)">
+            <input id="degree_institution2" name="degree_institution2" placeholder="ปริญญาโท (สถาบัน)">
+        </div>
+
+        <div class="grid-2">
+            <input id="degree_field3" name="degree_field3" placeholder="ปริญญาเอก (สาขา)">
+            <input id="degree_institution3" name="degree_institution3" placeholder="ปริญญาเอก (สถาบัน)">
+        </div>
+
+        <!-- JOB (dynamic up to 20) -->
+        <h3 class="section-title">ประวัติการทำงาน
+            <span class="count" id="jobCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
+                (0/20 ตำแหน่ง)
+            </span>
+        </h3>
+        <div id="jobsContainer"></div>
+        <button type="button" id="addJobRowBtn" class="btn-primary small">+ เพิ่มแถว</button>
+
+        <!-- Scope of Work (dynamic up to 5) -->
+        <h3 class="section-title">Scope of Work
+            <span class="count" id="scopeCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
+                (0/5 Scope)
+            </span>
+        </h3>
+        <div id="scopeContainer"></div>
+        <button type="button" id="addScopeRowBtn" class="btn-primary small">+ เพิ่มแถว</button>
+
+        <!-- Next Step (dynamic up to 5) -->
+        <h3 class="section-title">Next Step
+            <span class="count" id="nextStepCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
+                (0/5 Step)
+            </span>
+        </h3>
+        <div id="nextStepContainer"></div>
+        <button type="button" id="addNextStepRowBtn" class="btn-primary small">+ เพิ่มแถว</button>
+
+        <!-- Hidden -->
+        <input type="hidden" id="id" name="id">
+
+        <div class="form-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
+            <button type="submit" id="submit" class="btn-primary">บันทึก</button>
+        </div>
+
+    </form>
+</div>
+</div>
+
+  <script src="successor.js"></script>
+</body>
+</html>

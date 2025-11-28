@@ -30,6 +30,31 @@ body {
     color: #333;
 }
 
+.btn-back {
+    display: inline-block;
+    background: #ffffff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    transition: 0.25s;
+    margin-top: 30px;
+    margin-left: 4%;
+    margin-bottom: -30px;
+}
+
+.btn-back:hover {
+    background: #525252;
+    color: hsl(0, 0%, 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+
 /* ------------------------------------------------------
    TABLE
 ------------------------------------------------------ */
@@ -43,7 +68,7 @@ table {
 }
 
 table th {
-    background: #1976d2;
+    background: #b728b9;
     color: white;
     padding: 14px 10px;
     font-size: 15px;
@@ -75,7 +100,7 @@ button {
 }
 
 .btn-primary {
-    background: #1976d2;
+    background: #b728b9;
     color: white;
     padding: 8px 18px;
     border: none;
@@ -241,7 +266,7 @@ select {
 
 .job-row input {
     background: white;
-    border: 1px solid #ccc;
+    border: 1px solid hsl(0, 0%, 80%);
     padding: 9px 12px;
 }
 
@@ -261,6 +286,58 @@ select {
     color: red;
     font-size: 12px;
     margin-top: 2px;
+}
+
+.scope-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 120px;
+    gap: 12px;
+    background: #fafafa;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin-bottom: 12px;
+}
+
+.scope-row input {
+    background: white;
+    border: 1px solid hsl(0, 0%, 80%);
+    padding: 9px 12px;
+}
+
+.remove-scope {
+    background: #d32f2f;
+    padding: 9px 10px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+}
+
+.next-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 120px;
+    gap: 12px;
+    background: #fafafa;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin-bottom: 12px;
+}
+
+.next-row input {
+    background: white;
+    border: 1px solid hsl(0, 0%, 80%);
+    padding: 9px 12px;
+}
+
+.remove-next {
+    background: #d32f2f;
+    padding: 9px 10px;
+    border-radius: 6px;
+    border: none;
+    color: white;
 }
 
 /* ------------------------------------------------------
