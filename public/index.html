@@ -1,61 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>RAR-APP | เลือกรูปแบบฟอร์ม</title>
-  <link rel="stylesheet" href="style.css">
+  <title>CareerLens APP</title>
+  <link rel="icon" type="image/png" href="./uploads/icon/logo2.png"/>
   <style>
+    /* ===== Background สบายตาแบบ gradient ===== */
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #f5f6fa;
-      font-family: sans-serif;
+      background: linear-gradient(135deg, #e3f2f1, #f0fafa);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      margin: 0;
     }
+
+    /* ===== กล่องเมนู ===== */
     .menu-box {
-      background: white;
+      background: #ffffff;
       padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
       text-align: center;
-      width: 350px;
+      width: 360px;
+      border: 1px solid #e8e8e8;
+      transition: transform 0.2s ease;
     }
+
+    .menu-box:hover {
+      transform: translateY(-3px);
+    }
+
+    /* ===== Header ===== */
     h1 {
       margin-bottom: 30px;
+      font-size: 28px;
+      color: #116d6e;
+      font-weight: 600;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     }
-    a.menu-btn {
+
+    /* ===== ปุ่มเมนู ===== */
+    a.menu-btn, a.menu-btn2 {
       display: block;
-      padding: 16px;
-      background: #4a90e2;
+      padding: 18px;
       color: white;
       text-decoration: none;
-      border-radius: 10px;
-      margin-bottom: 15px;
+      border-radius: 12px;
+      margin-bottom: 18px;
       font-size: 18px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    a.menu-btn {
+      background: #409ae3;
     }
     a.menu-btn:hover {
-      background: #357ab8;
+      background: #2d74ad;
     }
+
     a.menu-btn2 {
-      display: block;
-      padding: 16px;
-      background: #df4ae2;
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      font-size: 18px;
+      background: #b17ee5;
     }
     a.menu-btn2:hover {
-      background: #a426a7;
+      background: #8d5ac5;
+    }
+
+    img {
+      width: 300px;
+      margin-bottom: -10px;
+      margin-top: -30px;
     }
   </style>
 </head>
 <body>
   <div class="menu-box">
-    <h1>เลือกแบบฟอร์ม</h1>
+    <img src="/uploads/icon/logo.png" alt="">
 
     <a class="menu-btn" href="incumbent.html">แบบฟอร์ม Incumbent</a>
     <a class="menu-btn2" href="successor.html">แบบฟอร์ม Successor</a>

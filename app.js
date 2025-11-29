@@ -34,6 +34,7 @@ app.use("/uploads", express.static(uploadDir));
 app.use("/incumbent", require("./routes/Incumbent"));
 app.use("/report-incumbent", require("./routes/Report_Incumbent"));
 app.use("/successor", require("./routes/successor"));
+app.use("/report-successor", require("./routes/Report_successor"));
 
 /* Start */
 app.listen(3000, () => {

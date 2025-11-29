@@ -5,172 +5,219 @@ const path = require("path");
 const sharp = require("sharp");
 const fs = require("fs");
 
-/* -------------------------------------------------------
-   MULTER (Upload)
-------------------------------------------------------- */
+/* ===========================================================
+   CREATE TABLE (Auto)
+=========================================================== */
+router.use((req, res, next) => {
+    const db = req.app.locals.db;
+
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS successor (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            pic TEXT,
+
+            emp_id TEXT,
+            title TEXT,
+            firstname TEXT,
+            lastname TEXT,
+            birthday TEXT,
+            work_start TEXT,
+
+            target_position TEXT,
+            index_no TEXT,
+            g_plus TEXT,
+            opq TEXT,
+            annual_performance66 TEXT,
+            annual_performance67 TEXT,
+
+            degree_field1 TEXT,
+            degree_institution1 TEXT,
+            degree_field2 TEXT,
+            degree_institution2 TEXT,
+            degree_field3 TEXT,
+            degree_institution3 TEXT,
+
+            job1 TEXT, job2 TEXT, job3 TEXT, job4 TEXT, job5 TEXT,
+            job6 TEXT, job7 TEXT, job8 TEXT, job9 TEXT, job10 TEXT,
+            job11 TEXT, job12 TEXT, job13 TEXT, job14 TEXT, job15 TEXT,
+            job16 TEXT, job17 TEXT, job18 TEXT, job19 TEXT, job20 TEXT,
+
+            scope1 TEXT, scope2 TEXT, scope3 TEXT, scope4 TEXT, scope5 TEXT,
+            nextstep1 TEXT, nextstep2 TEXT, nextstep3 TEXT, nextstep4 TEXT, nextstep5 TEXT
+        )
+    `).run();
+
+    next();
+});
+
+/* ===========================================================
+   MULTER UPLOAD
+=========================================================== */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = "uploads/successor/";
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
-    filename: (req, file, cb) =>
-        cb(null, Date.now() + "-" + file.originalname),
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
 });
 const upload = multer({ storage });
 
-/* -------------------------------------------------------
+async function compressImage(filePath) {
+    try {
+        await sharp(filePath)
+            .resize({ width: 600 })
+            .jpeg({ quality: 50 })
+            .toFile(filePath + "_tmp");
+
+        fs.renameSync(filePath + "_tmp", filePath);
+    } catch (e) { console.error(e); }
+}
+
+/* ===========================================================
    GET ALL
-------------------------------------------------------- */
+=========================================================== */
 router.get("/", (req, res) => {
     const db = req.app.locals.db;
     const rows = db.prepare(`SELECT * FROM successor ORDER BY id DESC`).all();
+
+    rows.forEach(r => {
+        r.pic_url = r.pic ? "/uploads/successor/" + r.pic : null;
+    });
+
     res.json(rows);
 });
 
-/* -------------------------------------------------------
+/* ===========================================================
    GET ONE
-------------------------------------------------------- */
+=========================================================== */
 router.get("/:id", (req, res) => {
     const db = req.app.locals.db;
-    const row = db
-        .prepare(`SELECT * FROM successor WHERE id=?`)
-        .get(req.params.id);
-
+    const row = db.prepare(`SELECT * FROM successor WHERE id=?`).get(req.params.id);
     if (!row) return res.status(404).json({ error: "NOT FOUND" });
-
     res.json(row);
 });
 
-/* -------------------------------------------------------
-   CREATE
-------------------------------------------------------- */
+/* ===========================================================
+   INSERT
+=========================================================== */
 router.post("/", upload.single("pic"), async (req, res) => {
     const db = req.app.locals.db;
-
-    let pic_url = null;
+    let pic = "";
 
     if (req.file) {
-        const output = req.file.path.replace(/(\.[\w]+)$/, "_resized$1");
-        await sharp(req.file.path).resize(600).toFile(output);
-        pic_url = path.relative("uploads", output); // Use relative path
+        await compressImage(req.file.path);
+        pic = req.file.filename;
     }
 
-    const default_fields = {
-        emp_id: null, title: null, firstname: null, lastname: null, birthday: null, work_start: null,
-        target_position: null, index_no: null, g_plus: null, opq: null, annual_performance66: null,
-        degree_field1: null, degree_institution1: null,
-        degree_field2: null, degree_institution2: null,
-        degree_field3: null, degree_institution3: null,
-        job1: null, job2: null, job3: null, job4: null, job5: null, job6: null, job7: null, job8: null, job9: null, job10: null,
-        job11: null, job12: null, job13: null, job14: null, job15: null, job16: null, job17: null, job18: null, job19: null, job20: null,
-        scope1: null, scope2: null, scope3: null, scope4: null, scope5: null,
-        nextstep1: null, nextstep2: null, nextstep3: null, nextstep4: null, nextstep5: null,
-    };
+    const fields = [
+        "pic",
+        "emp_id","title","firstname","lastname",
+        "birthday","work_start",
+        "target_position","index_no","g_plus","opq",
+        "annual_performance66","annual_performance67",
+        "degree_field1","degree_institution1",
+        "degree_field2","degree_institution2",
+        "degree_field3","degree_institution3"
+    ];
 
-    const data = { ...default_fields, ...req.body, pic_url };
+    for (let i = 1; i <= 20; i++) fields.push(`job${i}`);
+    for (let i = 1; i <= 5; i++) fields.push(`scope${i}`);
+    for (let i = 1; i <= 5; i++) fields.push(`nextstep${i}`);
 
-    const stmt = db.prepare(`
-        INSERT INTO successor (
-            pic_url,
-            emp_id, title, firstname, lastname, birthday, work_start,
-            target_position, index_no, g_plus, opq, annual_performance66,
-            degree_field1, degree_institution1,
-            degree_field2, degree_institution2,
-            degree_field3, degree_institution3,
-            job1, job2, job3, job4, job5, job6, job7, job8, job9, job10,
-            job11, job12, job13, job14, job15, job16, job17, job18, job19, job20,
-            scope1, scope2, scope3, scope4, scope5,
-            nextstep1, nextstep2, nextstep3, nextstep4, nextstep5
-        )
-        VALUES (
-            @pic_url,
-            @emp_id, @title, @firstname, @lastname, @birthday, @work_start,
-            @target_position, @index_no, @g_plus, @opq, @annual_performance66,
-            @degree_field1, @degree_institution1,
-            @degree_field2, @degree_institution2,
-            @degree_field3, @degree_institution3,
-            @job1, @job2, @job3, @job4, @job5, @job6, @job7, @job8, @job9, @job10,
-            @job11, @job12, @job13, @job14, @job15, @job16, @job17, @job18, @job19, @job20,
-            @scope1, @scope2, @scope3, @scope4, @scope5,
-            @nextstep1, @nextstep2, @nextstep3, @nextstep4, @nextstep5
-        )
-    `);
+    const sql = `
+        INSERT INTO successor (${fields.join(",")})
+        VALUES (${fields.map(() => "?").join(",")})
+    `;
 
-    try {
-        const result = stmt.run(data);
-        res.json({ message: "Successor Created", id: result.lastInsertRowid });
-    } catch (err) {
-        console.error("DB ERROR (Create Successor)", err);
-        res.status(500).json({ error: "Database Error" });
-    }
+    const values = fields.map(f => f === "pic" ? pic : req.body[f] || "");
+
+    const result = db.prepare(sql).run(values);
+
+    res.json({ message: "Added", id: result.lastInsertRowid });
 });
 
-/* -------------------------------------------------------
-   UPDATE
-------------------------------------------------------- */
+/* ===========================================================
+   UPDATE (KEEP OLD IMAGE)
+=========================================================== */
 router.put("/:id", upload.single("pic"), async (req, res) => {
     const db = req.app.locals.db;
-    let pic_url = req.body.pic_old || null;
 
+    // 1) ดึงข้อมูลเก่า
+    const old = db.prepare(`SELECT pic FROM successor WHERE id=?`).get(req.params.id);
+    let newPic = old.pic; // ค่า default = ใช้รูปเดิม
+
+    // 2) ถ้ามีรูปใหม่
     if (req.file) {
-        const output = req.file.path.replace(/(\.[\w]+)$/, "_resized$1");
-        await sharp(req.file.path).resize(600).toFile(output);
-        pic_url = path.relative("uploads", output);
+        await compressImage(req.file.path);
+        newPic = req.file.filename;
+
+        // ลบรูปเก่า
+        if (old && old.pic) {
+            const oldPath = "uploads/successor/" + old.pic;
+            if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
     }
-    
-    const default_fields = {
-        emp_id: null, title: null, firstname: null, lastname: null, birthday: null, work_start: null,
-        target_position: null, index_no: null, g_plus: null, opq: null, annual_performance66: null,
-        degree_field1: null, degree_institution1: null,
-        degree_field2: null, degree_institution2: null,
-        degree_field3: null, degree_institution3: null,
-        job1: null, job2: null, job3: null, job4: null, job5: null, job6: null, job7: null, job8: null, job9: null, job10: null,
-        job11: null, job12: null, job13: null, job14: null, job15: null, job16: null, job17: null, job18: null, job19: null, job20: null,
-        scope1: null, scope2: null, scope3: null, scope4: null, scope5: null,
-        nextstep1: null, nextstep2: null, nextstep3: null, nextstep4: null, nextstep5: null,
-    };
 
-    const data = { ...default_fields, ...req.body, pic_url, id: req.params.id };
+    // 3) สร้าง fields list
+    const fields = [
+        "pic",
+        "emp_id","title","firstname","lastname",
+        "birthday","work_start",
+        "target_position","index_no","g_plus","opq",
+        "annual_performance66","annual_performance67",
+        "degree_field1","degree_institution1",
+        "degree_field2","degree_institution2",
+        "degree_field3","degree_institution3"
+    ];
 
-    const stmt = db.prepare(`
+    for (let i = 1; i <= 20; i++) fields.push(`job${i}`);
+    for (let i = 1; i <= 5; i++) fields.push(`scope${i}`);
+    for (let i = 1; i <= 5; i++) fields.push(`nextstep${i}`);
+
+    // 4) กำหนดค่าใหม่ pic ใช้ newPic
+    const values = fields.map(f => {
+        if (f === "pic") return newPic;
+        return req.body[f] || "";
+    });
+
+    const sql = `
         UPDATE successor SET
-            pic_url=@pic_url,
-            emp_id=@emp_id, title=@title, firstname=@firstname, lastname=@lastname,
-            birthday=@birthday, work_start=@work_start,
-            target_position=@target_position, index_no=@index_no,
-            g_plus=@g_plus, opq=@opq, annual_performance66=@annual_performance66,
-            degree_field1=@degree_field1, degree_institution1=@degree_institution1,
-            degree_field2=@degree_field2, degree_institution2=@degree_institution2,
-            degree_field3=@degree_field3, degree_institution3=@degree_institution3,
-            job1=@job1, job2=@job2, job3=@job3, job4=@job4, job5=@job5,
-            job6=@job6, job7=@job7, job8=@job8, job9=@job9, job10=@job10,
-            job11=@job11, job12=@job12, job13=@job13, job14=@job14, job15=@job15,
-            job16=@job16, job17=@job17, job18=@job18, job19=@job19, job20=@job20,
-            scope1=@scope1, scope2=@scope2, scope3=@scope3, scope4=@scope4, scope5=@scope5,
-            nextstep1=@nextstep1, nextstep2=@nextstep2, nextstep3=@nextstep3,
-            nextstep4=@nextstep4, nextstep5=@nextstep5
-        WHERE id=@id
-    `);
+        ${fields.map(f => `${f}=?`).join(",")}
+        WHERE id=?
+    `;
 
-    try {
-        const result = stmt.run(data);
-        res.json({ message: "Successor Updated", updated: result.changes });
-    } catch (err) {
-        console.error("DB ERROR (Update Successor)", err);
-        res.status(500).json({ error: "Database Error" });
-    }
+    values.push(req.params.id);
+
+    const result = db.prepare(sql).run(values);
+
+    res.json({ message: "Updated", updated: result.changes });
 });
 
-/* -------------------------------------------------------
-   DELETE
-------------------------------------------------------- */
+/* ===========================================================
+   DELETE 
+=========================================================== */
 router.delete("/:id", (req, res) => {
     const db = req.app.locals.db;
-    const stmt = db.prepare(`DELETE FROM successor WHERE id=?`);
-    const result = stmt.run(req.params.id);
+    const id = req.params.id;
 
-    res.json({ message: "Delete OK", deleted: result.changes });
+    // 1) ดึงชื่อไฟล์รูป
+    const row = db.prepare(`SELECT pic FROM successor WHERE id=?`).get(id);
+
+    // 2) ลบข้อมูลจากฐานข้อมูล
+    const result = db.prepare(`DELETE FROM successor WHERE id=?`).run(id);
+
+    // 3) ถ้ามีรูป → ลบจากโฟลเดอร์
+    if (row && row.pic) {
+        const filePath = path.join("uploads/successor", row.pic);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+
+    res.json({ message: "Deleted", deleted: result.changes });
 });
 
 module.exports = router;

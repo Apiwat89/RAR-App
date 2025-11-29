@@ -142,12 +142,22 @@ router.put("/update/:id", upload.single("pic"), async (req, res) => {
     const id = req.params.id;
     const body = req.body;
 
+    // 1) ดึงภาพเก่าก่อน
+    const old = db.prepare(`SELECT pic FROM incumbent WHERE id=?`).get(id);
+
+    // 2) ถ้ามีรูปใหม่ → บีบอัด + ตั้งชื่อใหม่ + ลบรูปเก่า
     if (req.file) {
         const filePath = req.file.path;
         await compressImage(filePath);
         body.pic = req.file.filename;
+
+        if (old && old.pic) {
+            const oldPath = "uploads/" + old.pic;
+            if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        }
     }
 
+    // 3) ฟิลด์ที่ต้องเคลียร์เมื่อไม่มีข้อมูลส่งมา
     const degreeFields = [
         "Degree_field1", "Degree_institution1",
         "Degree_field2", "Degree_institution2",
@@ -162,6 +172,7 @@ router.put("/update/:id", upload.single("pic"), async (req, res) => {
         });
     }
 
+    // 4) สร้าง SQL SET field=? แบบ dynamic ครบทั้งหมด
     const updates = Object.keys(body).map(k => `${k}=?`).join(",");
     const values = [...Object.values(body), id];
 
@@ -176,9 +187,22 @@ router.put("/update/:id", upload.single("pic"), async (req, res) => {
 ------------------------------------------------------- */
 router.delete("/delete/:id", (req, res) => {
     const db = req.app.locals.db;
+    const id = req.params.id;
 
+    // 1) ดึงชื่อไฟล์รูปก่อน
+    const row = db.prepare(`SELECT pic FROM incumbent WHERE id=?`).get(id);
+
+    // 2) ลบข้อมูลจากฐานข้อมูล
     const stmt = db.prepare(`DELETE FROM incumbent WHERE id=?`);
-    const result = stmt.run(req.params.id);
+    const result = stmt.run(id);
+
+    // 3) ถ้ามีรูป → ลบรูปจากโฟลเดอร์ uploads/
+    if (row && row.pic) {
+        const filePath = path.join("uploads", row.pic);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
 
     res.json({ message: "Delete OK", deleted: result.changes });
 });

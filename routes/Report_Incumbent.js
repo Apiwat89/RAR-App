@@ -62,14 +62,39 @@ router.get("/pptx", async (req, res) => {
             color: "000000"
         });
 
-        slide.addText(`ถอดรหัสเส้นทางอาชีพของคุณ ${person.firstname} ${person.lastname}`, {
+        await addAutoFitText(slide, `ถอดรหัสเส้นทางอาชีพของคุณ ${person.firstname} ${person.lastname}`, {
             x: 0.4, y: 0.42,
-            fontSize: 32,
+            maxWidth: 11.5,     
+            fontSize: 32,  
+            minFont: 18,
             fontFace: "FreesiaUPC",
             bold: true,
             color: "00B050"
         });
 
+        // ==========================
+        // AUTO FIT TEXT FOR PPTX
+        // ==========================
+        async function addAutoFitText(slide, text, options) {
+            // ค่า default
+            let maxWidth = options.maxWidth || 10; 
+            let minFont = options.minFont || 14;
+
+            // Clone options เพื่อไม่แก้ object เดิม
+            let opt = { ...options };
+
+            while (opt.fontSize >= minFont) {
+                slide.addText(text, opt);
+
+                // คำนวณ approximate text width
+                // (ฟังก์ชันประเมินความยาวจากจำนวนตัวอักษร)
+                let estWidth = (text.length * opt.fontSize * 0.60) / 72; 
+
+                if (estWidth <= maxWidth) return;  // ผ่าน → ไม่ล้น
+
+                opt.fontSize -= 2; // ลดทีละ 2px
+            }
+        }
 
         /* --------------------------
            IMAGE
@@ -82,7 +107,7 @@ router.get("/pptx", async (req, res) => {
         }
 
         slide.addImage({
-            path: path.join(process.cwd(), "uploads", "Picture1.png"),
+            path: path.join(process.cwd(), "uploads/icon", "Picture1.png"),
             x: 9.25, y: 0.18, w: 0.5, h: 0.5
         });
 

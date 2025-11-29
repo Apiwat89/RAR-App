@@ -4,18 +4,21 @@
   <meta charset="UTF-8">
   <title>Successor Form</title>
   <link rel="stylesheet" href="successor.css">
+  <link rel="icon" type="image/png" href="./uploads/icon/logo2.png"/>
 </head>
 <body>
-
-    <a href="index.html" class="btn-back">← กลับหน้าเมนู</a>
-
-
   <div class="container">
-
+    <a href="index.html" class="btn-back">← กลับหน้าเมนู</a>
     <div class="header">
-        <h2>จัดการข้อมูล Successor</h2>
+        <div><h2>Successor Form</h2></div>
+        <div>
+            <div class="inputBox">
+                <img src="/uploads/icon/search-interface-symbol.png" alt="">
+                <input type="text" name="searchInput" id="searchInput" placeholder="ค้นหาข้อมูล">
+            </div>
+        </div>
         <div class="box1">
-            <button class="btn-primary" onclick="openAddModal()">+ เพิ่มใหม่</button>
+            <button class="btn-primary" onclick="openAddModal()">+ เพิ่มข้อมูล</button>
             <button class="btn-success" onclick="downloadPPTX()">⬇ โหลดรายงาน PPTX</button>
         </div>
     </div>
@@ -27,6 +30,8 @@
                 <th>ชื่อ</th>
                 <th>ตำแหน่งเป้าหมาย</th>
                 <th>ลำดับ</th>
+                <th>G+</th>
+                <th>OPQ</th>
                 <th>อายุ</th>
                 <th>จัดการ</th>
             </tr>
@@ -88,12 +93,12 @@
         <div class="grid-2">
           <div>
               <label>วันเกิด <label style="color: red;">*</label></label>
-              <input type="text" name="birthday" id="birthday" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
+              <input type="text" name="birthday" id="birthday" placeholder="(dd/mm/yyyy) รูปแบบ พ.ศ. เท่านั้น เช่น 01/01/2568" required>
           </div>
 
           <div>
               <label>วันที่เริ่มงาน <label style="color: red;">*</label></label>
-              <input type="text" name="work_start" id="work_start" placeholder="DD/MM/YYYY เช่น 27/11/2568" required>
+              <input type="text" name="work_start" id="work_start" placeholder="(dd/mm/yyyy) รูปแบบ พ.ศ. เท่านั้น เช่น 01/01/2568" required>
           </div>
       </div>
 
@@ -106,30 +111,30 @@
 
             <div>
                 <label>ลำดับ</label>
-                <input type="text" name="index_no" id="index_no">
+                <input type="number" name="index_no" id="index_no" placeholder="กรอกตัวเลข">
             </div>
         </div>
 
         <div class="grid-2">
           <div>
               <label>G+</label>
-              <input type="text" name="g_plus" id="g_plus">
+              <input type="number" name="g_plus" id="g_plus" placeholder="กรอกตัวเลข" >
           </div>
 
           <div>
               <label>OPQ</label>
-              <input type="text" name="opq" id="opq">
+              <input type="number" name="opq" id="opq" placeholder="กรอกตัวเลข">
           </div>
         </div>
 
         <div class="grid-2">
             <div>
                 <label>ผลการปฏิบัติงานปี 66</label>
-                <input type="text" name="annual_performance66" id="annual_performance66">
+                <input type="number" name="annual_performance66" id="annual_performance66" placeholder="กรอกตัวเลข">
             </div>
             <div>
                 <label>ผลการปฏิบัติงานปี 67</label>
-                <input type="text" name="annual_performance67" id="annual_performance67">
+                <input type="number" name="annual_performance67" id="annual_performance67" placeholder="กรอกตัวเลข">
             </div>
         </div>
 
@@ -153,8 +158,8 @@
 
         <!-- JOB (dynamic up to 20) -->
         <h3 class="section-title">ประวัติการทำงาน
-            <span class="count" id="jobCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
-                (0/20 ตำแหน่ง)
+            <span class="count" id="jobCount">
+                (0/20)
             </span>
         </h3>
         <div id="jobsContainer"></div>
@@ -162,8 +167,8 @@
 
         <!-- Scope of Work (dynamic up to 5) -->
         <h3 class="section-title">Scope of Work
-            <span class="count" id="scopeCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
-                (0/5 Scope)
+            <span class="count" id="scopeCount">
+                (0/5)
             </span>
         </h3>
         <div id="scopeContainer"></div>
@@ -171,8 +176,8 @@
 
         <!-- Next Step (dynamic up to 5) -->
         <h3 class="section-title">Next Step
-            <span class="count" id="nextStepCount" style="color:#d9534f; font-weight:bold; margin-left:20px;">
-                (0/5 Step)
+            <span class="count" id="nextStepCount">
+                (0/5)
             </span>
         </h3>
         <div id="nextStepContainer"></div>

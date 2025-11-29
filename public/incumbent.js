@@ -90,7 +90,7 @@ function addJobRow(job = "", agency = "", exp = "") {
     div.innerHTML = `
         <input placeholder="ตำแหน่ง" name="job${jobIndex}" value="${job}">
         <input placeholder="หน่วยงาน" name="Agency${jobIndex}" value="${agency}">
-        <input placeholder="อายุงาน YY/MM" name="job_exp${jobIndex}" value="${exp}">
+        <input placeholder="อายุงาน (yy/mm)" name="job_exp${jobIndex}" value="${exp}">
         <button type="button" class="remove-job" onclick="deleteRow(this);">ลบแถวนี้</button>
     `;
         // <div class="exp-error-container" style="margin-top:4px; min-height:14px;">
@@ -107,7 +107,7 @@ addBtn.addEventListener("click", () => addJobRow());
 
 function updateJobCount() {
     const count = document.querySelectorAll("#jobsContainer .job-row").length;
-    document.getElementById("jobCount").textContent = `(${count}/20 ตำแหน่ง)`;
+    document.getElementById("jobCount").textContent = `(${count}/20)`;
 }
 
 /* =============================
@@ -283,7 +283,6 @@ function validateDateInput(input) {
     const msgId = input.id + "_error";
     let msg = document.getElementById(msgId);
 
-    // ถ้ายังไม่มี error span → สร้างให้
     if (!msg) {
         msg = document.createElement("div");
         msg.id = msgId;
@@ -293,18 +292,51 @@ function validateDateInput(input) {
         input.insertAdjacentElement("afterend", msg);
     }
 
-    const parts = input.value.split("/");
-    const ok =
-        parts.length === 3 &&
-        parts[0].length === 2 &&
-        parts[1].length === 2 &&
-        parts[2].length === 4;
+    const v = input.value.trim();
+    const parts = v.split("/");
 
-    if (!ok) {
-        msg.textContent = "กรุณากรอกให้ครบรูปแบบ DD/MM/YYYY";
+    // ตรวจรูปแบบ
+    if (parts.length !== 3 || parts[0].length !== 2 || parts[1].length !== 2 || parts[2].length !== 4) {
+        setDateError("รูปแบบต้องเป็น DD/MM/YYYY");
+        return;
+    }
+
+    let [d, m, y] = parts.map(Number);
+
+    // แปลงปี พ.ศ. → ค.ศ.
+    if (y > 2400) y = y - 543;
+
+    // ตรวจช่วงตัวเลข
+    if (m < 1 || m > 12) {
+        setDateError("เดือนต้องอยู่ระหว่าง 01-12");
+        return;
+    }
+    if (d < 1 || d > 31) {
+        setDateError("วันต้องอยู่ระหว่าง 01-31");
+        return;
+    }
+
+    // ตรวจวันจริงตามเดือน
+    const testDate = new Date(y, m - 1, d);
+    if (
+        testDate.getFullYear() !== y ||
+        testDate.getMonth() !== m - 1 ||
+        testDate.getDate() !== d
+    ) {
+        setDateError("วันที่ไม่ถูกต้อง (ไม่มีอยู่จริง)");
+        return;
+    }
+
+    clearDateError();
+    return;
+
+    // helper
+    function setDateError(txt) {
+        msg.textContent = txt;
         input.classList.add("error");
         input.style.borderColor = "red";
-    } else {
+    }
+    function clearDateError() {
         msg.textContent = "";
         input.classList.remove("error");
         input.style.borderColor = "";
@@ -313,20 +345,74 @@ function validateDateInput(input) {
 
 /* --- YY/MM --- */
 function validateJobExpInput(input) {
-    // const msgId = input.name + "_error";
-    // const msg = document.getElementById(msgId);
-    const valid = input.value.length === 5;
+    const v = input.value.trim();
 
-    if (!valid) {
-        // msg.textContent = "รูปแบบต้องเป็น YY/MM เช่น 03/10";
-        input.classList.add("error");
-        input.style.borderColor = "red";
-    } else {
-        // msg.textContent = "";
+    let msgId = input.name + "_error";
+    let msg = document.getElementById(msgId);
+
+    // helper: ลบ error box
+    function removeErrorBox() {
+        if (msg) {
+            msg.remove();
+            msg = null;
+        }
         input.classList.remove("error");
         input.style.borderColor = "";
     }
+
+    // ถ้า error ต้องมี msg box
+    function createMsgBox() {
+        if (!msg) {
+            msg = document.createElement("div");
+            msg.id = msgId;
+            msg.style.color = "red";
+            msg.style.fontSize = "12px";
+            msg.style.marginTop = "2px";
+            input.insertAdjacentElement("afterend", msg);
+        }
+    }
+
+    // helper
+    function setError(txt) {
+        createMsgBox();
+        msg.textContent = txt;
+        input.classList.add("error");
+        input.style.borderColor = "red";
+    }
+
+    /* ============================
+         VALIDATION
+    ============================ */
+
+    // ต้องเป็น 5 ตัว → "YY/MM"
+    if (!/^\d{2}\/\d{2}$/.test(v)) {
+        setError("รูปแบบต้องเป็น YY/MM เช่น 03/08");
+        return;
+    }
+
+    const [yy, mm] = v.split("/").map(Number);
+
+    if (mm >= 12) {
+        setError("เดือนต้องน้อยกว่า 12");
+        return;
+    }
+
+    removeErrorBox();
 }
+
+/* =============================
+    ค้นหาข้อมูล
+============================= */
+document.getElementById("searchInput").addEventListener("input", function () {
+    const search = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#incumbentTable tbody tr");
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(search) ? "" : "none";
+    });
+});
+
 
 /* =============================
     CHECK ERRORS

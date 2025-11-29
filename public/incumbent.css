@@ -3,7 +3,7 @@
 ------------------------------------------------------ */
 body {
     font-family: 'Prompt', sans-serif;
-    background: #eef1f5;
+    background: #eaf5fe;
     margin: 0;
     padding: 0;
 }
@@ -18,16 +18,65 @@ body {
    HEADER
 ------------------------------------------------------ */
 .header {
-    display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    display: flex;
+}
+
+/* กล่อง search */
+.header > div:nth-of-type(2) {
+    width: 50%;
+}
+
+/* ตัวกล่อง input */
+.inputBox {
+    display: flex;
+    align-items: center;
+    background: #eaf5fe;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 6px 10px;
+    width: 100%;
+    transition: 0.2s;
+}
+
+/* ไอคอนแว่น */
+.inputBox img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    margin-left: 5px;
+}
+
+/* ช่อง input */
+.inputBox input {
+    width: 100%;
+    border: none !important;  /* เอากรอบออก */
+    outline: none !important; /* เอาเส้นฟ้า default ออก */
+    font-size: 15px;
+    background: transparent;  /* ให้เนียนไปกับ box */
+    box-shadow: none !important; /* เอาเงา focus ออก */
+}
+
+/* เอฟเฟกต์ focus */
+.inputBox:focus-within {
+    border-color: #86bde8;
+    box-shadow: 0 0 4px #7396b2;
+    background-color: #e1f2ff;
 }
 
 .header h2 {
     font-size: 26px;
     font-weight: 700;
-    color: #333;
+    color: #003c78;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .btn-back {
@@ -42,13 +91,11 @@ body {
     border: 1px solid #ddd;
     box-shadow: 0 3px 8px rgba(0,0,0,0.08);
     transition: 0.25s;
-    margin-top: 30px;
-    margin-left: 4%;
-    margin-bottom: -30px;
+    margin-bottom: 30px;
 }
 
 .btn-back:hover {
-    background: #525252;
+    background: #409ae3;
     color: hsl(0, 0%, 100%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
@@ -68,7 +115,7 @@ table {
 }
 
 table th {
-    background: #1976d2;
+    background: #1e7ede;
     color: white;
     padding: 14px 10px;
     font-size: 15px;
@@ -100,7 +147,7 @@ button {
 }
 
 .btn-primary {
-    background: #1976d2;
+    background: #409ae3;
     color: white;
     padding: 8px 18px;
     border: none;
@@ -110,7 +157,7 @@ button {
 }
 
 .btn-primary:hover {
-    background: #0f62b5;
+    background: #1e7ede;
 }
 
 .btn-success {
@@ -136,6 +183,10 @@ button {
     cursor: pointer;
 }
 
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
 .btn-danger {
     background: #d32f2f;
     color: white;
@@ -143,6 +194,10 @@ button {
     border-radius: 6px;
     border: none;
     cursor: pointer;
+}
+
+.btn-danger:hover {
+    background: #b71c1c;
 }
 
 .small {
@@ -239,8 +294,13 @@ select {
     font-size: 19px;
     font-weight: 700;
     color: #333;
-    border-left: 4px solid #1976d2;
+    border-left: 4px solid #1e7ede;
     padding-left: 10px;
+}
+
+.count {
+    color:#d9534f; 
+    font-weight:bold; 
 }
 
 /* ------------------------------------------------------
@@ -255,7 +315,7 @@ select {
 
 .job-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 120px;
+    grid-template-columns: 1fr 1fr 0.4fr 120px;
     gap: 12px;
     background: #fafafa;
     padding: 14px;
@@ -268,6 +328,7 @@ select {
     background: white;
     border: 1px solid hsl(0, 0%, 80%);
     padding: 9px 12px;
+    border-radius: 10px;
 }
 
 .remove-job {
@@ -276,6 +337,10 @@ select {
     border-radius: 6px;
     border: none;
     color: white;
+}
+
+.remove-job:hover {
+    background: #b71c1c;
 }
 
 .input-error {

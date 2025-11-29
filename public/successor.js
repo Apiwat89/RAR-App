@@ -23,30 +23,50 @@ function calcAge(dateStr) {
 }
 
 /* =============================
+    UTIL: safe querySelector
+============================= */
+function $id(id) { return document.getElementById(id); }
+
+/* =============================
     LOAD TABLE
 ============================= */
 async function loadData() {
-    const res = await fetch(API);
-    const data = await res.json();
+    try {
+        const res = await fetch(API);
+        if (!res.ok) {
+            console.error("LOAD ERROR:", await res.text());
+            return;
+        }
+        const data = await res.json();
 
-    const tbody = document.getElementById("tableBody");
-    tbody.innerHTML = "";
+        const tbody = $id("tableBody");
+        tbody.innerHTML = "";
 
-    data.forEach(row => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${row.pic_url ? `<img class="thumb" src="/uploads/${row.pic_url}">` : "-"}</td>
-                <td>${row.firstname || ""} ${row.lastname || ""}</td>
-                <td>${row.target_position || ""}</td>
-                <td>${row.index_no || ""}</td>
-                <td>${calcAge(row.birthday) || ""}</td>
-                <td>
-                    <button class="btn-primary btn-small" onclick="editItem(${row.id})">แก้ไข</button>
-                    <button class="btn-danger btn-small" onclick="deleteItem(${row.id})">ลบ</button>
-                </td>
-            </tr>
-        `;
-    });
+        data.forEach(row => {
+            // support both pic_url (full path) and pic (filename)
+            const imgSrc = row.pic_url
+                ? row.pic_url // backend might return full url
+                : (row.pic ? `/uploads/successor/${row.pic}` : null);
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${imgSrc ? `<img class="thumb" src="${imgSrc}">` : "-"}</td>
+                    <td>${row.firstname || ""} ${row.lastname || ""}</td>
+                    <td>${row.target_position || ""}</td>
+                    <td>${row.index_no || ""}</td>
+                    <td>${row.g_plus || ""}</td>
+                    <td>${row.opq || ""}</td>
+                    <td>${calcAge(row.birthday) || ""}</td>
+                    <td>
+                        <button class="btn-primary btn-small" onclick="editItem(${row.id})">แก้ไข</button>
+                        <button class="btn-danger btn-small" onclick="deleteItem(${row.id})">ลบ</button>
+                    </td>
+                </tr>
+            `;
+        });
+    } catch (err) {
+        console.error("LOAD EXCEPTION:", err);
+    }
 }
 
 loadData();
@@ -55,10 +75,11 @@ loadData();
     MODAL CONTROL
 ============================= */
 function openAddModal() {
-    document.getElementById("modalTitle").innerText = "เพิ่มข้อมูล";
-    document.getElementById("successorForm").reset();
-    document.getElementById("id").value = "";
+    $id("modalTitle").innerText = "เพิ่มข้อมูล";
+    $id("successorForm").reset();
+    $id("id").value = "";
 
+    // clear dynamic containers
     jobsContainer.innerHTML = "";
     scopeContainer.innerHTML = "";
     nextStepContainer.innerHTML = "";
@@ -75,34 +96,33 @@ function openAddModal() {
     updateScopeCount();
     updateNextStepCount();
 
-    document.getElementById("formModal").style.display = "block";
+    // clear any existing preview
+    const preview = $id("picPreview");
+    if (preview) preview.src = "";
+
+    $id("formModal").style.display = "block";
 }
 
 function closeModal() {
-    document.getElementById("formModal").style.display = "none";
+    $id("formModal").style.display = "none";
 }
 
 /* =============================
     JOB ROW SYSTEM (jobsContainer)
     up to 20 rows
 ============================= */
-const jobsContainer = document.getElementById("jobsContainer");
-const addJobBtn = document.getElementById("addJobRowBtn");
+const jobsContainer = $id("jobsContainer");
+const addJobBtn = $id("addJobRowBtn");
 let jobIndex = 1;
 
 function addJobRow(job = "") {
-    let rows = jobsContainer.querySelectorAll(".job-row");
+    const rows = jobsContainer.querySelectorAll(".job-row");
+    if (rows.length >= 20) rows[0].remove();
 
-    // ถ้าเต็ม 20 → ให้ลบอันแรก
-    if (rows.length >= 20) {
-        rows[0].remove();
-    }
-
-    // เพิ่มแถวใหม่
     const div = document.createElement("div");
     div.classList.add("job-row");
     div.innerHTML = `
-        <input placeholder="ตำแหน่ง" name="job${jobIndex}" value="${job}">
+        <input placeholder="ตำแหน่ง" name="job${jobIndex}" value="${escapeHtml(job)}">
         <button type="button" class="remove-job" onclick="deleteJobRow(this);">ลบแถวนี้</button>
     `;
     jobsContainer.appendChild(div);
@@ -123,7 +143,7 @@ function deleteJobRow(btn) {
 
 function updateJobCount() {
     const count = jobsContainer.querySelectorAll(".job-row").length;
-    document.getElementById("jobCount").textContent = `(${count}/20 ตำแหน่ง)`;
+    $id("jobCount").textContent = `(${count}/20)`;
 }
 
 function reindexJobRows() {
@@ -141,22 +161,18 @@ function reindexJobRows() {
     SCOPE ROW SYSTEM (scopeContainer)
     up to 5 rows
 ============================= */
-const scopeContainer = document.getElementById("scopeContainer");
-const addScopeBtn = document.getElementById("addScopeRowBtn");
+const scopeContainer = $id("scopeContainer");
+const addScopeBtn = $id("addScopeRowBtn");
 let scopeIndex = 1;
 
 function addScopeRow(scope = "") {
-    let rows = scopeContainer.querySelectorAll(".scope-row");
-
-    // ถ้าเต็ม 5 → ลบแถวแรก
-    if (rows.length >= 5) {
-        rows[0].remove();
-    }
+    const rows = scopeContainer.querySelectorAll(".scope-row");
+    if (rows.length >= 5) rows[0].remove();
 
     const div = document.createElement("div");
     div.classList.add("scope-row");
     div.innerHTML = `
-        <input placeholder="ขอบเขตความรับผิดชอบ" name="scope${scopeIndex}" value="${scope}">
+        <input placeholder="ขอบเขตความรับผิดชอบ" name="scope${scopeIndex}" value="${escapeHtml(scope)}">
         <button type="button" class="remove-scope" onclick="deleteScopeRow(this);">ลบแถวนี้</button>
     `;
     scopeContainer.appendChild(div);
@@ -188,30 +204,25 @@ function reindexScopeRows() {
 
 function updateScopeCount() {
     const count = scopeContainer.querySelectorAll(".scope-row").length;
-    document.getElementById("scopeCount").textContent = `(${count}/5 Scope)`;
+    $id("scopeCount").textContent = `(${count}/5)`;
 }
 
 /* =============================
     NEXT STEP ROW SYSTEM
     up to 5 rows
 ============================= */
-const nextStepContainer = document.getElementById("nextStepContainer");
-const addNextStepBtn = document.getElementById("addNextStepRowBtn");
+const nextStepContainer = $id("nextStepContainer");
+const addNextStepBtn = $id("addNextStepRowBtn");
 let nextStepIndex = 1;
 
 function addNextStepRow(next = "") {
-
-    let rows = nextStepContainer.querySelectorAll(".next-row");
-
-    // ถ้าเต็ม 5 → ลบแถวแรก
-    if (rows.length >= 5) {
-        rows[0].remove();
-    }
+    const rows = nextStepContainer.querySelectorAll(".next-row");
+    if (rows.length >= 5) rows[0].remove();
 
     const div = document.createElement("div");
     div.classList.add("next-row");
     div.innerHTML = `
-        <input placeholder="ขั้นตอนถัดไป" name="nextstep${nextStepIndex}" value="${next}">
+        <input placeholder="ขั้นตอนถัดไป" name="nextstep${nextStepIndex}" value="${escapeHtml(next)}">
         <button type="button" class="remove-next" onclick="deleteNextStepRow(this);">ลบแถวนี้</button>
     `;
     nextStepContainer.appendChild(div);
@@ -243,41 +254,72 @@ function reindexNextStepRows() {
 
 function updateNextStepCount() {
     const count = nextStepContainer.querySelectorAll(".next-row").length;
-    document.getElementById("nextStepCount").textContent = `(${count}/5 Step)`;
+    $id("nextStepCount").textContent = `(${count}/5)`;
 }
 
-
 /* =============================
-    SAVE (POST or PUT)
+    SUBMIT-LOCK + SAVE (POST or PUT)
 ============================= */
-document.getElementById("successorForm").onsubmit = async (e) => {
+let isSubmitting = false;
+
+$id("successorForm").onsubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;           // กันยิงซ้ำ
+    isSubmitting = true;
+    $id("submit").disabled = true;
+
     try {
-        // reindex to ensure names are continuous
+        // ensure dynamic fields names are continuous
         reindexJobRows();
         reindexScopeRows();
         reindexNextStepRows();
 
-        const id = document.getElementById("id").value;
+        const id = $id("id").value;
         const method = id ? "PUT" : "POST";
         const url = id ? `${API}/${id}` : `${API}`;
 
-        const formData = new FormData(e.target);
+        // build FormData but append file only if user selected one
+        const form = $id("successorForm");
+        const formData = new FormData();
 
-        const options = { method, body: formData };
-        const res = await fetch(url, options);
+        // copy all form fields except file
+        Array.from(new FormData(form).entries()).forEach(([k, v]) => {
+            // skip file inputs: we'll handle explicitly
+            if (k === "pic") return;
+            formData.append(k, v);
+        });
+
+        // file input (assumed id="pic" and name="pic")
+        const fileInput = $id("pic");
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            formData.append("pic", fileInput.files[0]);
+        } else {
+            // If editing and no new file chosen, don't append pic.
+            // If backend expects pic_old to keep same filename, include pic_old hidden input in form.
+            const picOldEl = $id("pic_old");
+            if (picOldEl && picOldEl.value) {
+                formData.append("pic_old", picOldEl.value);
+            }
+        }
+
+        const res = await fetch(url, { method, body: formData });
+
         if (!res.ok) {
-            console.error("SERVER ERROR:", await res.text());
-            alert("บันทึกไม่สำเร็จ");
+            const txt = await res.text();
+            console.error("SERVER ERROR:", txt);
+            alert("บันทึกไม่สำเร็จ: " + (txt || res.status));
             return;
         }
 
         closeModal();
-        loadData();
+        await loadData();
     } catch (err) {
         console.error("SUBMIT ERROR:", err);
         alert("เกิดข้อผิดพลาด");
+    } finally {
+        isSubmitting = false;
+        $id("submit").disabled = false;
     }
 };
 
@@ -285,57 +327,87 @@ document.getElementById("successorForm").onsubmit = async (e) => {
     EDIT (load single item into form)
 ============================= */
 async function editItem(id) {
-    const res = await fetch(`${API}/${id}`);
-    if (!res.ok) {
-        alert("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้");
-        return console.error(await res.text());
+    try {
+        const res = await fetch(`${API}/${id}`);
+        if (!res.ok) {
+            console.error("LOAD ITEM ERROR:", await res.text());
+            alert("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้");
+            return;
+        }
+        const item = await res.json();
+
+        openAddModal();
+        $id("modalTitle").innerText = "แก้ไขข้อมูล";
+        $id("id").value = id;
+
+        // fill basic fields
+        const keys = ["emp_id","title","firstname","lastname","birthday","work_start",
+                      "target_position","index_no","g_plus","opq","annual_performance66","annual_performance67",
+                      "degree_field1","degree_institution1","degree_field2","degree_institution2","degree_field3","degree_institution3"];
+        keys.forEach(k => {
+            const el = $id(k);
+            if (el) el.value = item[k] !== undefined ? item[k] : "";
+        });
+
+        // show existing pic filename in hidden input (so backend can keep it if no new file)
+        if ($id("pic_old")) {
+            $id("pic_old").value = item.pic || "";
+        }
+
+        // jobs
+        jobsContainer.innerHTML = "";
+        jobIndex = 1;
+        for (let i = 1; i <= 20; i++) {
+            const val = item[`job${i}`];
+            if (val) addJobRow(val);
+        }
+        if (jobsContainer.querySelectorAll(".job-row").length === 0) addJobRow();
+
+        // scopes
+        scopeContainer.innerHTML = "";
+        scopeIndex = 1;
+        for (let i = 1; i <= 5; i++) {
+            const val = item[`scope${i}`];
+            if (val) addScopeRow(val);
+        }
+        if (scopeContainer.querySelectorAll(".scope-row").length === 0) addScopeRow();
+
+        // next steps
+        nextStepContainer.innerHTML = "";
+        nextStepIndex = 1;
+        for (let i = 1; i <= 5; i++) {
+            const val = item[`nextstep${i}`];
+            if (val) addNextStepRow(val);
+        }
+        if (nextStepContainer.querySelectorAll(".next-row").length === 0) addNextStepRow();
+
+        updateJobCount();
+        updateScopeCount();
+        updateNextStepCount();
+
+        // preview existing image (if any)
+        const preview = $id("picPreview");
+        const imgSrc = item.pic_url ? item.pic_url : (item.pic ? `/uploads/successor/${item.pic}` : null);
+        if (preview) preview.src = imgSrc || "";
+
+    } catch (err) {
+        console.error("EDIT ERROR:", err);
+        alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
     }
-    const item = await res.json();
-
-    openAddModal();
-    document.getElementById("modalTitle").innerText = "แก้ไขข้อมูล";
-    document.getElementById("id").value = id;
-
-    // fill basic fields
-    const keys = ["emp_id","title","firstname","lastname","birthday","work_start",
-                  "target_position","index_no","g_plus","opq","annual_performance66","annual_performance67",
-                  "degree_field1","degree_institution1","degree_field2","degree_institution2","degree_field3","degree_institution3"];
-    keys.forEach(k => {
-        const el = document.getElementById(k);
-        if (el && item[k] !== undefined) el.value = item[k];
-    });
-
-    // jobs
-    jobsContainer.innerHTML = "";
-    jobIndex = 1;
-    for (let i = 1; i <= 20; i++) {
-        const val = item[`job${i}`];
-        if (val) addJobRow(val);
-    }
-    if (jobsContainer.querySelectorAll(".job-row").length === 0) addJobRow();
-
-    // scopes
-    scopeContainer.innerHTML = "";
-    scopeIndex = 1;
-    for (let i = 1; i <= 5; i++) {
-        const val = item[`scope${i}`];
-        if (val) addScopeRow(val);
-    }
-    if (scopeContainer.querySelectorAll(".scope-row").length === 0) addScopeRow();
-
-    // next steps
-    nextStepContainer.innerHTML = "";
-    nextStepIndex = 1;
-    for (let i = 1; i <= 5; i++) {
-        const val = item[`nextstep${i}`];
-        if (val) addNextStepRow(val);
-    }
-    if (nextStepContainer.querySelectorAll(".next-row").length === 0) addNextStepRow();
-
-    updateJobCount();
-    updateScopeCount();
-    updateNextStepCount();
 }
+
+/* =============================
+    ค้นหาข้อมูล
+============================= */
+document.getElementById("searchInput").addEventListener("input", function () {
+    const search = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#successorTable tbody tr");
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(search) ? "" : "none";
+    });
+});
 
 /* =============================
     DELETE
@@ -345,11 +417,11 @@ async function deleteItem(id) {
     try {
         const res = await fetch(`${API}/${id}`, { method: "DELETE" });
         if (!res.ok) {
+            console.error("DELETE ERROR:", await res.text());
             alert("ลบรายการไม่สำเร็จ");
-            console.error(await res.text());
             return;
         }
-        loadData();
+        await loadData();
     } catch (err) {
         console.error("DELETE ERROR:", err);
         alert("เกิดข้อผิดพลาด ไม่สามารถลบได้");
@@ -360,7 +432,7 @@ async function deleteItem(id) {
     PPTX DOWNLOAD
 ============================= */
 async function downloadPPTX() {
-    const res = await fetch("/Report-incumbent/pptx");
+    const res = await fetch("/Report-successor/pptx");
     if (!res.ok) { alert("ไม่สามารถดาวน์โหลดได้"); return; }
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
@@ -389,6 +461,7 @@ document.addEventListener("input", function (e) {
 function validateDateInput(input) {
     const msgId = input.id + "_error";
     let msg = document.getElementById(msgId);
+
     if (!msg) {
         msg = document.createElement("div");
         msg.id = msgId;
@@ -397,17 +470,52 @@ function validateDateInput(input) {
         msg.style.marginTop = "2px";
         input.insertAdjacentElement("afterend", msg);
     }
-    const parts = input.value.split("/");
-    const ok =
-        parts.length === 3 &&
-        parts[0].length === 2 &&
-        parts[1].length === 2 &&
-        parts[2].length === 4;
-    if (!ok) {
-        msg.textContent = "กรุณากรอกให้ครบรูปแบบ DD/MM/YYYY";
+
+    const v = input.value.trim();
+    const parts = v.split("/");
+
+    // ตรวจรูปแบบ
+    if (parts.length !== 3 || parts[0].length !== 2 || parts[1].length !== 2 || parts[2].length !== 4) {
+        setDateError("รูปแบบต้องเป็น DD/MM/YYYY");
+        return;
+    }
+
+    let [d, m, y] = parts.map(Number);
+
+    // แปลงปี พ.ศ. → ค.ศ.
+    if (y > 2400) y = y - 543;
+
+    // ตรวจช่วงตัวเลข
+    if (m < 1 || m > 12) {
+        setDateError("เดือนต้องอยู่ระหว่าง 01-12");
+        return;
+    }
+    if (d < 1 || d > 31) {
+        setDateError("วันต้องอยู่ระหว่าง 01-31");
+        return;
+    }
+
+    // ตรวจวันจริงตามเดือน
+    const testDate = new Date(y, m - 1, d);
+    if (
+        testDate.getFullYear() !== y ||
+        testDate.getMonth() !== m - 1 ||
+        testDate.getDate() !== d
+    ) {
+        setDateError("วันที่ไม่ถูกต้อง (ไม่มีอยู่จริง)");
+        return;
+    }
+
+    clearDateError();
+    return;
+
+    // helper
+    function setDateError(txt) {
+        msg.textContent = txt;
         input.classList.add("error");
         input.style.borderColor = "red";
-    } else {
+    }
+    function clearDateError() {
         msg.textContent = "";
         input.classList.remove("error");
         input.style.borderColor = "";
@@ -416,8 +524,8 @@ function validateDateInput(input) {
 
 function checkFormErrors() {
     const hasError = document.querySelector(".error");
-    const saveBtn = document.getElementById("submit");
-    const addRowBtn = document.getElementById("addJobRowBtn");
+    const saveBtn = $id("submit");
+    const addRowBtn = $id("addJobRowBtn");
     if (hasError) {
         saveBtn.disabled = true;
         addRowBtn.disabled = true;
@@ -425,4 +533,17 @@ function checkFormErrors() {
         saveBtn.disabled = false;
         addRowBtn.disabled = false;
     }
+}
+
+/* =============================
+    Helpers
+============================= */
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
