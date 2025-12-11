@@ -82,18 +82,15 @@ router.get("/pptx", async (req, res) => {
 
             // Clone options เพื่อไม่แก้ object เดิม
             let opt = { ...options };
-
+            // หา fontSize สุดท้ายที่พอดีก่อน แล้วเพิ่มข้อความเพียงครั้งเดียว
             while (opt.fontSize >= minFont) {
-                slide.addText(text, opt);
-
-                // คำนวณ approximate text width
-                // (ฟังก์ชันประเมินความยาวจากจำนวนตัวอักษร)
-                let estWidth = (text.length * opt.fontSize * 0.60) / 72; 
-
-                if (estWidth <= maxWidth) return;  // ผ่าน → ไม่ล้น
-
-                opt.fontSize -= 2; // ลดทีละ 2px
+                // คำนวณ approximate text width จากความยาวข้อความ
+                let estWidth = (text.length * opt.fontSize * 0.60) / 72;
+                if (estWidth <= maxWidth) break; // ขนาดนี้พอแล้ว
+                opt.fontSize -= 2; // ลดแล้วลองใหม่
             }
+
+            slide.addText(text, opt);
         }
 
         /* --------------------------
