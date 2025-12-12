@@ -9,7 +9,7 @@ const fs = require("fs");
    MULTER (Upload)
 ------------------------------------------------------- */
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, "uploads/"),
+    destination: (req, file, cb) => cb(null, path.join(__dirname, "..", "uploads")),
     filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
@@ -152,7 +152,7 @@ router.put("/update/:id", upload.single("pic"), async (req, res) => {
         body.pic = req.file.filename;
 
         if (old && old.pic) {
-            const oldPath = "uploads/" + old.pic;
+            const oldPath = path.join(__dirname, "..", "uploads", old.pic);
             if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
         }
     }
@@ -198,7 +198,7 @@ router.delete("/delete/:id", (req, res) => {
 
     // 3) ถ้ามีรูป → ลบรูปจากโฟลเดอร์ uploads/
     if (row && row.pic) {
-        const filePath = path.join("uploads", row.pic);
+        const filePath = path.join(__dirname, "..", "uploads", row.pic);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }

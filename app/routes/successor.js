@@ -27,8 +27,10 @@ router.use((req, res, next) => {
             index_no TEXT,
             g_plus TEXT,
             opq TEXT,
+            LeaderEdge TEXT,
             annual_performance66 TEXT,
             annual_performance67 TEXT,
+            potential_assessment,
 
             degree_field1 TEXT,
             degree_institution1 TEXT,
@@ -55,7 +57,7 @@ router.use((req, res, next) => {
 =========================================================== */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = "uploads/successor/";
+        const dir = path.join(__dirname, "..", "uploads", "successor");
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
@@ -116,8 +118,8 @@ router.post("/", upload.single("pic"), async (req, res) => {
         "pic",
         "emp_id","title","firstname","lastname",
         "birthday","work_start",
-        "target_position","index_no","g_plus","opq",
-        "annual_performance66","annual_performance67",
+        "target_position","index_no","g_plus","opq","LeaderEdge",
+        "annual_performance66","annual_performance67","potential_assessment",
         "degree_field1","degree_institution1",
         "degree_field2","degree_institution2",
         "degree_field3","degree_institution3"
@@ -156,7 +158,7 @@ router.put("/:id", upload.single("pic"), async (req, res) => {
 
         // ลบรูปเก่า
         if (old && old.pic) {
-            const oldPath = "uploads/successor/" + old.pic;
+            const oldPath = path.join(__dirname, "..", "uploads", "successor", old.pic);
             if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
         }
     }
@@ -166,8 +168,8 @@ router.put("/:id", upload.single("pic"), async (req, res) => {
         "pic",
         "emp_id","title","firstname","lastname",
         "birthday","work_start",
-        "target_position","index_no","g_plus","opq",
-        "annual_performance66","annual_performance67",
+        "target_position","index_no","g_plus","opq","LeaderEdge",
+        "annual_performance66","annual_performance67","potential_assessment",
         "degree_field1","degree_institution1",
         "degree_field2","degree_institution2",
         "degree_field3","degree_institution3"
@@ -211,7 +213,7 @@ router.delete("/:id", (req, res) => {
 
     // 3) ถ้ามีรูป → ลบจากโฟลเดอร์
     if (row && row.pic) {
-        const filePath = path.join("uploads/successor", row.pic);
+        const filePath = path.join(__dirname, "..", "uploads", "successor", row.pic);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }

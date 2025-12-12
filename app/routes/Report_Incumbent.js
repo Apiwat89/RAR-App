@@ -98,13 +98,13 @@ router.get("/pptx", async (req, res) => {
         --------------------------- */
         if (person.pic) {
             slide.addImage({
-                path: path.join(process.cwd(), "uploads", person.pic),
+                path: path.join(__dirname, "..", "uploads", person.pic),
                 x: 0.3, y: 0.85, w: 1, h: 1.3
             });
         }
 
         slide.addImage({
-            path: path.join(process.cwd(), "uploads/icon", "Picture1.png"),
+            path: path.join(__dirname, "..", "uploads", "icon", "Picture1.png"),
             x: 9.25, y: 0.18, w: 0.5, h: 0.5
         });
 

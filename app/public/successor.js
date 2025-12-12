@@ -222,7 +222,7 @@ function addNextStepRow(next = "") {
     const div = document.createElement("div");
     div.classList.add("next-row");
     div.innerHTML = `
-        <input placeholder="ขั้นตอนถัดไป" name="nextstep${nextStepIndex}" value="${escapeHtml(next)}">
+        <input placeholder="(ปี ค.ศ. : หัวข้อการพัฒนา) เช่น ปี 2026 : Cross-BU Rotation เป็นผู้อำนวยการด้าน X ธุรกิจ Y" name="nextstep${nextStepIndex}" value="${escapeHtml(next)}">
         <button type="button" class="remove-next" onclick="deleteNextStepRow(this);">ลบแถวนี้</button>
     `;
     nextStepContainer.appendChild(div);
@@ -342,7 +342,7 @@ async function editItem(id) {
 
         // fill basic fields
         const keys = ["emp_id","title","firstname","lastname","birthday","work_start",
-                      "target_position","index_no","g_plus","opq","annual_performance66","annual_performance67",
+                      "target_position","index_no","g_plus","opq","LeaderEdge","annual_performance66","annual_performance67","potential_assessment",
                       "degree_field1","degree_institution1","degree_field2","degree_institution2","degree_field3","degree_institution3"];
         keys.forEach(k => {
             const el = $id(k);

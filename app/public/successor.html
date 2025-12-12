@@ -125,9 +125,18 @@
               <label>OPQ</label>
               <input type="number" name="opq" id="opq" placeholder="กรอกตัวเลข">
           </div>
-        </div>
 
-        <div class="grid-2">
+            <div>
+                <label>LeaderEdge</label>
+                <select id="LeaderEdge" name="LeaderEdge">
+                    <option value="">ไม่มี</option>
+                    <option value="Leverage">Leverage</option>
+                    <option value="Invest">Invest</option>
+                    <option value="Redirect">Redirect</option>
+                    <option value="Reconsider">Reconsider</option>
+                </select>
+            </div>
+
             <div>
                 <label>ผลการปฏิบัติงานปี 66</label>
                 <input type="number" name="annual_performance66" id="annual_performance66" placeholder="กรอกตัวเลข">
@@ -135,6 +144,16 @@
             <div>
                 <label>ผลการปฏิบัติงานปี 67</label>
                 <input type="number" name="annual_performance67" id="annual_performance67" placeholder="กรอกตัวเลข">
+            </div>
+
+            <div>
+                <label>ผลประเมินศักยภาพ</label>
+                <select id="potential_assessment" name="potential_assessment">
+                    <option value="">ไม่มี</option>
+                    <option value="AT Potential">AT Potential</option>
+                    <option value="HI Function">HI Function</option>
+                    <option value="High Potential">High Potential</option>
+                </select>
             </div>
         </div>
 
@@ -157,7 +176,7 @@
         </div>
 
         <!-- JOB (dynamic up to 20) -->
-        <h3 class="section-title">ประวัติการทำงาน
+        <h3 class="section-title">ประวัติการทำงาน <span style="color: #777777; font-size: 14px;">- ให้เรียงลำดับข้อมูลจากต่ำแหน่งเก่าไปต่ำแหน่งปัจจุบัน</span>
             <span class="count" id="jobCount">
                 (0/20)
             </span>
@@ -175,7 +194,7 @@
         <button type="button" id="addScopeRowBtn" class="btn-primary small">+ เพิ่มแถว</button>
 
         <!-- Next Step (dynamic up to 5) -->
-        <h3 class="section-title">Next Step
+        <h3 class="section-title">Next Step  <span style="color: #777777; font-size: 14px;">- ให้เรียงลำดับข้อมูลปีจากน้อยไปมาก</span>
             <span class="count" id="nextStepCount">
                 (0/5)
             </span>

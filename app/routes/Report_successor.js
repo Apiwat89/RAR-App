@@ -75,10 +75,20 @@ router.get("/pptx", async (req, res) => {
         }
 
         slide.addImage({
-            path: path.join(process.cwd(), "uploads/icon", "Picture1.png"),
+            path: path.join(__dirname, "..", "uploads", "icon", "Picture1.png"),   
             x: 9.25, y: 0.18, w: 0.5, h: 0.5
         });
 
+        // checkbox ศักยภาพ
+        function potentialText(val) {
+            const opts = ["AT POTENTIAL", "HI FUNCTION", "HIGH POTENTIAL"];
+            return opts.map(o => {
+                const checked = val.includes(o) ? "■" : "□"; // ■ = filled box, □ = empty box
+                return `${checked} ${o}`;
+            }).join("\n");
+        }
+
+        
         /* -------------------------------------------------------
            BLOCKS
         ------------------------------------------------------- */
@@ -89,8 +99,15 @@ router.get("/pptx", async (req, res) => {
                 allJobs.push(job);
             }
         }
+
         let jobs = allJobs.slice(-5);
-        let jobLines = jobs.map(j => {
+        let sortJobs = [];
+        for (let i = 4; i >= 0; i--) {
+            if (jobs[i] != undefined) {
+                sortJobs.push(jobs[i]);
+            }
+        }
+        let jobLines = sortJobs.map(j => {
             return { text: `-    ${j}\n` };
         });
 
@@ -127,7 +144,7 @@ router.get("/pptx", async (req, res) => {
                 edu.push([
                     { text: "ปริญญาตรี\n", options: { bold: true} },
                     { text: `สาขา ${person.degree_field1 || "-"}\n` },
-                    { text: `${person.degree_institution1 || "-"}`, options: { bold: true} },
+                    { text: `${person.degree_institution1 || "-"}`},
                     { text: "\n\n" }
                 ]);
             }
@@ -137,7 +154,7 @@ router.get("/pptx", async (req, res) => {
                 edu.push([
                     { text: "ปริญญาโท\n", options: { bold: true} },
                     { text: `สาขา ${person.degree_field2 || "-"}\n` },
-                    { text: `${person.degree_institution2 || "-"}`, options: { bold: true} },
+                    { text: `${person.degree_institution2 || "-"}`},
                     { text: "\n\n" }
                 ]);
             }
@@ -147,7 +164,7 @@ router.get("/pptx", async (req, res) => {
                 edu.push([
                     { text: "ปริญญาเอก\n", options: { bold: true} },
                     { text: `สาขา ${person.degree_field3 || "-"}\n` },
-                    { text: `${person.degree_institution3 || "-"}`, options: { bold: true}  }
+                    { text: `${person.degree_institution3 || "-"}`}
                 ]);
             }
 
@@ -178,7 +195,7 @@ router.get("/pptx", async (req, res) => {
             ],
             [
                 { text: `${person.index_no}`, options: { align: "center", fontSize: 12} },
-                { text: `${person.title} ${person.firstname} ${person.lastname}\n\nG+ : ${person.g_plus}\nOPQ : ${person.opq}\n\nผลการปฏิบัติงาน\n67 : ${person.annual_performance67}\n66 : ${person.annual_performance66}`, options: { fontSize: 12} },
+                { text: `${person.title} ${person.firstname} ${person.lastname}\n\nG+ : ${person.g_plus}\nOPQ : ${person.opq}\n${person.LeaderEdge ? person.LeaderEdge +"\n" : ""}\nผลการปฏิบัติงาน\n67 : ${person.annual_performance67}\n66 : ${person.annual_performance66}\n\nศักยภาพ\n${potentialText(person.potential_assessment.toUpperCase())}\n`, options: { fontSize: 12} },
                 {
                     options: { align: "center", fontSize: 12 },
                     text: [
@@ -193,7 +210,7 @@ router.get("/pptx", async (req, res) => {
                     options: { fontSize: 12 },
                     text: [
                         ...jobLines,
-                        { text: "\nDefinition ของงานขายอาหารสัตว์ Scope of work" , options: { bold: true } },
+                        { text: "\nDefinition Scope of work ของงานหลัก" , options: { bold: true } },
                         ...ScopeLines
                     ]
                 },
@@ -209,12 +226,12 @@ router.get("/pptx", async (req, res) => {
             fontSize: 15,
             fontFace: "FreesiaUPC",
             fill: "FFFFFF",
-            colW: [0.8, 1.1, 1.0, 2.6, 1.5, 1.5, 1.5]
+            colW: [0.8, 1.15, 0.95, 2.6, 1.5, 1.5, 1.5]
         });
 
         if (person.pic) {
             slide.addImage({
-                path: path.join(process.cwd(), "uploads/successor", person.pic),
+                path: path.join(__dirname, "..", "uploads", "successor", person.pic),
                 x: 0.01, y: 1.8, w: 0.778, h: 1.0
             });
         }
