@@ -1,163 +1,215 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Incumbent Form</title>
-  <link rel="stylesheet" href="incumbent.css">
-  <link rel="icon" type="image/png" href="./uploads/icon/logo2.png"/>
+    <meta charset="UTF-8">
+    <title>Incumbent Form - CareerLens</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="incumbent.css">
+    <link rel="icon" type="image/png" href="./uploads/icon/logo2.png" />
 </head>
+
 <body>
     <div class="container">
-        <a href="index.html" class="btn-back">← กลับหน้าเมนู</a>
+        <a href="index.html" class="btn-back">
+            <span>←</span> กลับหน้าเมนู
+        </a>
+
         <div class="header">
-            <div><h2>Incumbent Form</h2></div>
             <div>
-                <div class="inputBox">
+                <h2>Incumbent Form</h2>
+                <div style="color: var(--text-muted); font-size: 14px;">จัดการข้อมูลพนักงานปัจจุบัน</div>
+            </div>
+
+            <div class="search-box-container">
+                <div class="input-with-icon">
                     <img src="/uploads/icon/search-interface-symbol.png" alt="">
-                    <input type="text" name="searchInput" id="searchInput" placeholder="ค้นหาข้อมูล">
+                    <input type="text" name="searchInput" id="searchInput"
+                        placeholder="ค้นหาชื่อ, ตำแหน่ง หรือหน่วยงาน...">
                 </div>
             </div>
-            <div class="box1">
-                <button class="btn-primary" onclick="openAddModal()">+ เพิ่มข้อมูล</button>
-                <button class="btn-success" onclick="downloadPPTX()">⬇ โหลดรายงาน PPTX</button>
+
+            <div class="actions-container">
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <span>+</span> เพิ่มข้อมูล
+                </button>
+                <button class="btn btn-success" onclick="downloadPPTX()">
+                    <span>⬇</span> Report PPTX
+                </button>
             </div>
         </div>
 
-        <table id="incumbentTable">
-            <thead>
-                <tr>
-                    <th>รูป</th>
-                    <th>ชื่อ</th>
-                    <th>ตำแหน่งปัจจุบัน</th>
-                    <th>หน่วยงาน</th>
-                    <th>อายุ</th>
-                    <th>จัดการ</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-container">
+            <table id="incumbentTable">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">รูป</th>
+                        <th>ชื่อ-นามสกุล</th>
+                        <th>ตำแหน่งปัจจุบัน</th>
+                        <th>หน่วยงาน</th>
+                        <th>อายุ</th>
+                        <th style="width: 150px; text-align: right;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
 
     </div>
 
     <!-- ======================
     POPUP MODAL
     ======================= -->
-    <div id="formModal" class="modal">
+    <div id="formModal" class="modal-overlay">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h2 id="modalTitle">เพิ่มข้อมูล</h2>
-                <span class="close" onclick="closeModal()">×</span>
+                <h2 id="modalTitle" style="margin:0;">เพิ่มข้อมูล</h2>
+                <span class="close-btn" onclick="closeModal()">×</span>
             </div>
 
-            <form id="incumbentForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                <form id="incumbentForm" enctype="multipart/form-data">
 
-            <!-- ========== รูปภาพ ========== -->
-            <div class="form-section">
-                <label>รูปภาพ </label>
-                <input type="file" name="pic" id="pic" >
+                    <!-- ========== รูปภาพ ========== -->
+                    <div class="input-group" style="margin-bottom: 24px;">
+                        <label>รูปภาพโปรไฟล์</label>
+                        <input type="file" name="pic" id="pic"
+                            style="border: 1px dashed var(--border-color); padding: 20px;">
+                    </div>
+
+                    <!-- ========== ข้อมูลส่วนตัว ========== -->
+                    <div class="section-title">ข้อมูลพนักงาน</div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>รหัสพนักงาน <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="emp_id" id="emp_id" required placeholder="เช่น 64001">
+                        </div>
+
+                        <div class="input-group">
+                            <label>คำนำหน้า <span style="color: var(--danger-color);">*</span></label>
+                            <select id="title" name="title" required>
+                                <option value="" disabled selected>กรุณาเลือก</option>
+                                <option value="นาย">นาย</option>
+                                <option value="นาง">นาง</option>
+                                <option value="นางสาว">นางสาว</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>ชื่อ <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="firstname" id="firstname" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>นามสกุล <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="lastname" id="lastname" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>ตำแหน่งปัจจุบัน <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="current_position" id="current_position" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>หน่วยงาน <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="unit" id="unit" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>วันเกิด <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="birthday" id="birthday" placeholder="dd/mm/yyyy (พ.ศ.)" required>
+                            <span style="font-size: 11px; color: var(--text-muted); margin-top: -4px;">เช่น
+                                01/01/2530</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label>วันที่เริ่มงาน <span style="color: var(--danger-color);">*</span></label>
+                            <input type="text" name="work_start" id="work_start" placeholder="dd/mm/yyyy (พ.ศ.)"
+                                required>
+                            <span style="font-size: 11px; color: var(--text-muted); margin-top: -4px;">เช่น
+                                01/01/2560</span>
+                        </div>
+                    </div>
+
+                    <!-- ========== Degree Section ========== -->
+                    <div class="section-title">ประวัติการศึกษา</div>
+
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>ระดับปริญญาตรี</label>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <input id="Degree_field1" name="Degree_field1" placeholder="สาขาวิชา">
+                            <input id="Degree_institution1" name="Degree_institution1" placeholder="สถาบันการศึกษา">
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>ระดับปริญญาโท</label>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <input id="Degree_field2" name="Degree_field2" placeholder="สาขาวิชา">
+                            <input id="Degree_institution2" name="Degree_institution2" placeholder="สถาบันการศึกษา">
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label>ระดับปริญญาเอก</label>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <input id="Degree_field3" name="Degree_field3" placeholder="สาขาวิชา">
+                            <input id="Degree_institution3" name="Degree_institution3" placeholder="สถาบันการศึกษา">
+                        </div>
+                    </div>
+
+                    <!-- ============================
+                    JOB / AGENCY / EXP Section
+                ============================= -->
+                    <div class="section-title" style="justify-content: space-between;">
+                        <span>ประวัติการทำงานย้อนหลัง</span>
+                        <span id="jobCount"
+                            style="font-size: 12px; font-weight: normal; color: var(--text-muted); background: var(--secondary-bg); padding: 2px 8px; border-radius: 4px;">0/20</span>
+                    </div>
+
+                    <div id="jobsContainer"></div>
+
+                    <button type="button" id="addJobRowBtn" class="btn btn-secondary btn-small"
+                        style="width: 100%; border-style: dashed;">
+                        + เพิ่มประวัติการทำงาน
+                    </button>
+
+                    <!-- Hidden -->
+                    <input type="hidden" id="id" name="id">
+
+                </form>
             </div>
 
-            <!-- ========== ข้อมูลส่วนตัว ========== -->
-            <h3 class="section-title">ข้อมูลพนักงาน</h3>
-
-            <div class="grid-2">
-                <div>
-                    <label>ID <label style="color: red;">*</label></label>
-                    <input type="text" name="emp_id" id="emp_id" required>
-                </div>
-
-                <div>
-                    <label>คำนำหน้า <label style="color: red;">*</label></label>
-                    <select id="title" name="title" required>
-                        <option value="" disabled selected>กรุณาเลือก</option>
-                        <option value="นาย">นาย</option>
-                        <option value="นาง">นาง</option>
-                        <option value="นางสาว">นางสาว</option>
-                    </select>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
+                <button type="button" id="submit" class="btn btn-primary"
+                    onclick="document.getElementById('incumbentForm').requestSubmit()">บันทึกข้อมูล</button>
             </div>
 
-            <div class="grid-2">
-                <div>
-                    <label>ชื่อ <label style="color: red;">*</label></label>
-                    <input type="text" name="firstname" id="firstname" required>
-                </div>
-
-                <div>
-                    <label>นามสกุล <label style="color: red;">*</label></label>
-                    <input type="text" name="lastname" id="lastname" required>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div>
-                    <label>ตำแหน่งปัจจุบัน <label style="color: red;">*</label></label>
-                    <input type="text" name="current_position" id="current_position" required>
-                </div>
-
-                <div>
-                    <label>หน่วยงาน <label style="color: red;">*</label></label>
-                    <input type="text" name="unit" id="unit" required>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div>
-                    <label>วันเกิด <label style="color: red;">*</label></label>
-                    <input type="text" name="birthday" id="birthday" placeholder="(dd/mm/yyyy) รูปแบบ พ.ศ. เท่านั้น เช่น 01/01/2568" required>
-                </div>
-
-                <div>
-                    <label>วันที่เริ่มงาน <label style="color: red;">*</label></label>
-                    <input type="text" name="work_start" id="work_start" placeholder="(dd/mm/yyyy) รูปแบบ พ.ศ. เท่านั้น เช่น 01/01/2568" required>
-                </div>
-            </div>
-
-            <!-- ========== Degree Section ========== -->
-            <h3 class="section-title">ปริญญา</h3>
-
-            <div class="grid-2">
-                <input id="Degree_field1" name="Degree_field1" placeholder="ปริญญาตรี (สาขา)">
-                <input id="Degree_institution1" name="Degree_institution1" placeholder="ปริญญาตรี (สถาบัน)">
-            </div>
-
-            <div class="grid-2">
-                <input id="Degree_field2" name="Degree_field2" placeholder="ปริญญาโท (สาขา)">
-                <input id="Degree_institution2" name="Degree_institution2" placeholder="ปริญญาโท (สถาบัน)">
-            </div>
-
-            <div class="grid-2">
-                <input id="Degree_field3" name="Degree_field3" placeholder="ปริญญาเอก (สาขา)">
-                <input id="Degree_institution3" name="Degree_institution3" placeholder="ปริญญาเอก (สถาบัน)">
-            </div>
-
-            <!-- ============================
-                JOB / AGENCY / EXP Section
-            ============================= -->
-            <h3 class="section-title">ตำแหน่ง / หน่วยงาน / อายุงานในตำแหน่ง
-                <span class="count" id="jobCount">
-                    (0/20)
-                </span>
-            </h3>
-            <div id="jobsContainer"></div>
-
-            <button type="button" id="addJobRowBtn" class="btn-primary small">
-                + เพิ่มแถว
-            </button>
-
-            <!-- Hidden -->
-            <input type="hidden" id="id" name="id">
-
-            <div class="form-footer">
-                <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
-                <button type="submit" id="submit" class="btn-primary">บันทึก</button>
-            </div>
-
-        </form>
+        </div>
     </div>
-</div>
 
-  <script src="incumbent.js"></script>
+    <script src="incumbent.js"></script>
+    <script>
+        // Override modal functions to work with new classes
+        const originalCloseModal = window.closeModal;
+        window.closeModal = function () {
+            document.getElementById("formModal").style.display = "none";
+        }
+
+        // Ensure modal header title update works (override might be needed in incumbent.js, but checking element IDs first)
+        // IDs match: formModal, modalTitle, incumbentForm, etc.
+        // We just need to make sure display style is handled correctly by the existing script or updated CSS.
+        // global.css default is display: none. existing js sets block.
+    </script>
 </body>
+
 </html>

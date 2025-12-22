@@ -46,7 +46,7 @@ echo Checking files...
 if exist "%BASE%\app.js" echo   [OK] app.js
 if exist "%BASE%\node.exe" echo   [OK] node.exe
 if exist "%BASE%\data\database.sqlite" echo   [OK] database.sqlite
-if exist "%BASE%\uploads\icon\Picture1.png" echo   [OK] Picture1.png
+if exist "%BASE%\uploads\Picture1.png" echo   [OK] Picture1.png
 echo.
 
 echo Opening browser...

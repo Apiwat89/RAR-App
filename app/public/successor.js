@@ -100,7 +100,7 @@ function openAddModal() {
     const preview = $id("picPreview");
     if (preview) preview.src = "";
 
-    $id("formModal").style.display = "block";
+    $id("formModal").style.display = "flex";
 }
 
 function closeModal() {
@@ -341,9 +341,9 @@ async function editItem(id) {
         $id("id").value = id;
 
         // fill basic fields
-        const keys = ["emp_id","title","firstname","lastname","birthday","work_start",
-                      "target_position","index_no","g_plus","opq","LeaderEdge","annual_performance66","annual_performance67","potential_assessment",
-                      "degree_field1","degree_institution1","degree_field2","degree_institution2","degree_field3","degree_institution3"];
+        const keys = ["emp_id", "title", "firstname", "lastname", "birthday", "work_start",
+            "target_position", "index_no", "g_plus", "opq", "LeaderEdge", "annual_performance66", "annual_performance67", "potential_assessment",
+            "degree_field1", "degree_institution1", "degree_field2", "degree_institution2", "degree_field3", "degree_institution3"];
         keys.forEach(k => {
             const el = $id(k);
             if (el) el.value = item[k] !== undefined ? item[k] : "";

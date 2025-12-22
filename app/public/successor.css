@@ -1,425 +1,163 @@
 /* ------------------------------------------------------
-   GLOBAL
------------------------------------------------------- */
-body {
-    font-family: 'Prompt', sans-serif;
-    background: #fcf7ff;
-    margin: 0;
-    padding: 0;
-}
+   INHERIT FROM GLOBAL.CSS
+   ------------------------------------------------------ */
 
-.container {
-    width: 92%;
-    max-width: 1300px;
-    margin: 40px auto;
-}
+/* 
+  NOTE: Most styles are now in global.css to ensure consistency.
+  This file only contains styles specific to successor.html
+*/
 
 /* ------------------------------------------------------
-   HEADER
------------------------------------------------------- */
+   HEADER LAYOUT
+   ------------------------------------------------------ */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 24px;
+    gap: 24px;
 }
 
-/* กล่อง search */
-.header > div:nth-of-type(2) {
-    width: 50%;
+.search-box-container {
+    flex: 1;
+    max-width: 400px;
 }
 
-/* ตัวกล่อง input */
-.inputBox {
+.input-with-icon {
+    position: relative;
     display: flex;
     align-items: center;
-    background: #fcf7ff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 6px 10px;
-    width: 100%;
-    transition: 0.2s;
 }
 
-/* ไอคอนแว่น */
-.inputBox img {
-    width: 20px;
-    height: 20px;
-    opacity: 0.7;
-    margin-left: 5px;
+.input-with-icon img {
+    position: absolute;
+    left: 12px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
 }
 
-/* ช่อง input */
-.inputBox input {
-    width: 100%;
-    border: none !important;  /* เอากรอบออก */
-    outline: none !important; /* เอาเส้นฟ้า default ออก */
-    font-size: 15px;
-    background: transparent;  /* ให้เนียนไปกับ box */
-    box-shadow: none !important; /* เอาเงา focus ออก */
+.input-with-icon input {
+    padding-left: 40px;
+    /* Space for icon */
+    border-radius: 50px;
+    /* Pill shape for search */
+    background: white;
 }
 
-/* เอฟเฟกต์ focus */
-.inputBox:focus-within {
-    border-color: #b58bdf;
-    box-shadow: 0 0 4px #975cd2;
-    background-color: #f8eefe;
-}
-
-.header h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #49147d;
+.actions-container {
+    display: flex;
+    gap: 12px;
 }
 
 .btn-back {
-    display: inline-block;
-    background: #ffffff;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    text-decoration: none;
-    border: 1px solid #ddd;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-    transition: 0.25s;
-    margin-bottom: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 20px;
 }
 
 .btn-back:hover {
-    background: #b17ee5;
-    color: hsl(0, 0%, 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-
-
-/* ------------------------------------------------------
-   TABLE
------------------------------------------------------- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-}
-
-table th {
-    background: #8c5bbe;
-    color: white;
-    padding: 14px 10px;
-    font-size: 15px;
-    font-weight: 600;
-}
-
-table td {
-    padding: 12px;
-    border-bottom: 1px solid #e5e5e5;
-    text-align: center;
-}
-
-table tr:hover td {
-    background: #f6f9fc;
-}
-
-img.thumb {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
+    color: var(--primary-color);
 }
 
 /* ------------------------------------------------------
-   BUTTONS
------------------------------------------------------- */
-button {
-    font-family: inherit;
-}
-
-.btn-primary {
-    background: #b17ee5;
-    color: white;
-    padding: 8px 18px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.15s;
-}
-
-.btn-primary:hover {
-    background: #8c5bbe;
-}
-
-.btn-success {
-    background: #aad219;
-    color: white;
-    padding: 8px 18px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.15s;
-}
-
-.btn-success:hover {
-    background: #86a710;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-    padding: 8px 18px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
-}
-
-.btn-danger {
-    background: #d32f2f;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-danger:hover {
-    background: #b71c1c;
-}  
-
-.small {
-    padding: 6px 14px;
-    font-size: 14px;
-}
-
-/* ------------------------------------------------------
-   MODAL
------------------------------------------------------- */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    padding: 30px 0;
-    overflow-y: auto;
-}
-
-.modal-content {
-    background: white;
-    width: 88%;
-    max-width: 1100px;
-    margin: auto;
-    padding: 30px;
-    border-radius: 14px;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.15);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close {
-    font-size: 30px;
-    cursor: pointer;
-}
-
-/* ------------------------------------------------------
-   FORM INPUTS
------------------------------------------------------- */
-input[type="text"],
-input[type="file"] {
-    width: 100%;
-    padding: 9px 12px;
-    border-radius: 8px;
-    border: 1px solid #cfcfcf;
-    outline: none;
-    transition: 0.15s;
-    font-size: 15px;
-}
-
-input[type="text"]:focus {
-    border-color: #1976d2;
-    box-shadow: 0 0 0 3px rgba(25,118,210,0.15);
-}
-
-select {
-    width: 100%;
-    padding: 9px 12px;
-    border-radius: 8px;
-    border: 1px solid #cfcfcf;
-    outline: none;
-    transition: 0.15s;
-    font-size: 15px;
-}
-
-/* ------------------------------------------------------
-   FORM GRID
------------------------------------------------------- */
-.grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-.grid-2 input {
-    width: 100%;
-    padding: 9px 12px;
-    border-radius: 8px;
-    border: 1px solid #cfcfcf;
-    outline: none;
-    transition: 0.15s;
-    font-size: 15px;
-}
-
-.section-title {
-    margin-top: 28px;
-    margin-bottom: 10px;
-    font-size: 19px;
-    font-weight: 700;
-    color: #333;
-    border-left: 4px solid #8c5bbe;
-    padding-left: 10px;
-}
-
-/* ------------------------------------------------------
-   JOB ROWS (สวยเหมือน Web HR)
------------------------------------------------------- */
-#jobsContainer {
+   DYNAMIC ROWS (Job, Scope, Next Step)
+   ------------------------------------------------------ */
+#jobsContainer,
+#scopeContainer,
+#nextStepContainer {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-bottom: 12px;
 }
 
-.job-row {
+.job-row,
+.scope-row,
+.next-row {
     display: grid;
-    grid-template-columns: 1fr 120px;
     gap: 12px;
-    background: #fafafa;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #e6e6e6;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    background: var(--secondary-bg);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    align-items: center;
 }
 
-.job-row input {
-    background: white;
-    border: 1px solid hsl(0, 0%, 80%);
-    padding: 9px 12px;
-    border-radius: 10px;
-}
-
-.remove-job {
-    background: #d32f2f;
-    padding: 9px 10px;
-    border-radius: 6px;
-    border: none;
-    color: white;
-}
-
-.remove-job:hover {
-    background: #b71c1c;
-}
-
-.input-error {
-    border: 1px solid red !important;
-}
-
-.error-text {
-    color: red;
-    font-size: 12px;
-    margin-top: 2px;
+.job-row {
+    grid-template-columns: 1fr 1fr 0.4fr auto;
 }
 
 .scope-row {
-    display: grid;
-    grid-template-columns: 1fr 120px;
-    gap: 12px;
-    background: #fafafa;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #e6e6e6;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    margin-bottom: 12px;
-}
-
-.scope-row input {
-    background: white;
-    border: 1px solid hsl(0, 0%, 80%);
-    padding: 9px 12px;
-    border-radius: 10px;
-}
-
-.remove-scope {
-    background: #d32f2f;
-    padding: 9px 10px;
-    border-radius: 6px;
-    border: none;
-    color: white;
-}
-
-.remove-scope:hover {
-    background: #b71c1c;
+    grid-template-columns: 1fr 1fr 1fr auto;
 }
 
 .next-row {
-    display: grid;
-    grid-template-columns: 1fr 120px;
-    gap: 12px;
-    background: #fafafa;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #e6e6e6;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    margin-bottom: 12px;
+    grid-template-columns: 1fr 1fr 1fr auto;
 }
 
+.job-row input,
+.scope-row input,
 .next-row input {
+    border: 1px solid var(--border-color);
     background: white;
-    border: 1px solid hsl(0, 0%, 80%);
-    padding: 9px 12px;
-    border-radius: 10px;
 }
 
+/* Remove Buttons */
+.remove-job,
+.remove-scope,
 .remove-next {
-    background: #d32f2f;
-    padding: 9px 10px;
-    border-radius: 6px;
+    background: #fee2e2;
+    color: #ef4444;
     border: none;
-    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
+.remove-job:hover,
+.remove-scope:hover,
 .remove-next:hover {
-    background: #b71c1c;
+    background: #fecaca;
 }
 
-.count {
-    color:#d9534f; 
-    font-weight:bold; 
+/* Validation */
+.input-error {
+    border-color: var(--danger-color) !important;
+}
+
+.error-text {
+    color: var(--danger-color);
+    font-size: 12px;
+    margin-top: 4px;
 }
 
 /* ------------------------------------------------------
-   FOOTER
------------------------------------------------------- */
-.form-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 14px;
-    margin-top: 25px;
-}
+   RESPONSIVE ADJUSTMENTS
+   ------------------------------------------------------ */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-input, select, textarea {
-    width: 100%;
-    box-sizing: border-box;
-}
+    .search-box-container {
+        max-width: 100%;
+    }
 
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .job-row,
+    .scope-row,
+    .next-row {
+        grid-template-columns: 1fr;
+    }
+}

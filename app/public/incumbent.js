@@ -65,7 +65,7 @@ function openAddModal() {
 
     updateJobCount();
 
-    document.getElementById("formModal").style.display = "block";
+    document.getElementById("formModal").style.display = "flex";
 }
 
 function closeModal() {
