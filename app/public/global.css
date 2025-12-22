@@ -266,7 +266,6 @@ table {
 thead {
     background-color: var(--secondary-bg);
     border-bottom: 1px solid var(--border-color);
-    border: 1px solid red;
 }
 
 th {
@@ -276,7 +275,10 @@ th {
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    text-align: center;
+
+    /* เพิ่มชุดนี้เข้าไปครับ */
+    text-align: center !important; 
+    vertical-align: middle !important;
 }
 
 td {
