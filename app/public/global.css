@@ -121,7 +121,8 @@ h6 {
 /* =========================================
    COMPONENTS: BUTTONS
    ========================================= */
-.btn {
+.btn,
+.btn-small {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -212,7 +213,15 @@ input[type="email"],
 input[type="date"],
 input[type="file"],
 select,
-textarea {
+textarea,
+.input-group:nth-child(8) input,
+.input-group:nth-child(9) input,
+.input-group:nth-child(10) input,
+.input-group:nth-child(11) input,
+.input-group:nth-child(12) input,
+.job-row input,
+.scope-row input,
+.next-row input {
     width: 100%;
     padding: 10px 12px;
     font-size: 14px;
@@ -275,10 +284,6 @@ th {
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-
-    /* เพิ่มชุดนี้เข้าไปครับ */
-    text-align: center !important; 
-    vertical-align: middle !important;
 }
 
 td {

@@ -87,16 +87,25 @@
     align-items: center;
 }
 
+th:nth-child(1),
+th:nth-child(8) {
+    text-align: center !important;
+}
+
+td:nth-child(8) {
+    text-align: center !important;
+}
+
 .job-row {
-    grid-template-columns: 1fr 1fr 0.4fr auto;
+    grid-template-columns: 3fr 1fr  auto;
 }
 
 .scope-row {
-    grid-template-columns: 1fr 1fr 1fr auto;
+    grid-template-columns: 3fr 1fr auto;
 }
 
 .next-row {
-    grid-template-columns: 1fr 1fr 1fr auto;
+    grid-template-columns: 3fr 1fr auto;
 }
 
 .job-row input,

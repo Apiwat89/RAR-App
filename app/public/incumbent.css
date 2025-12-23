@@ -66,6 +66,15 @@
 /* ------------------------------------------------------
    JOB ROWS
    ------------------------------------------------------ */
+th:nth-child(1),
+th:nth-child(6) {
+    text-align: center !important;
+}
+
+td:nth-child(6) {
+    text-align: center !important;
+}
+
 #jobsContainer {
     display: flex;
     flex-direction: column;
@@ -75,13 +84,13 @@
 
 .job-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 0.4fr auto;
+    grid-template-columns: 1fr 1fr 0.5fr auto;
     gap: 12px;
     background: var(--secondary-bg);
     padding: 16px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    align-items: center;
+    align-items: center;     
 }
 
 .job-row input {
